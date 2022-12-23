@@ -1,8 +1,8 @@
 {
-  "include": ["src"],
+  "include": ["src", "vite-env.d.ts", "tsconfig.node.json", "main.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ESNext",
     "target": "esnext",
     "outDir": "dist",
 
@@ -17,6 +17,7 @@
     // "declaration": true,
     // "declarationMap": true,
     // "declarationDir": "types",
+    "strictNullChecks": true,
 
     // [ Additional Checks ]
     "noUnusedLocals": true,
@@ -34,11 +35,20 @@
     "moduleResolution": "node",
 
     // [ Advanced ]
-    // "skipLibCheck": true,
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
 
     // [ Build ]
     "listFiles": false,
-    "listEmittedFiles": true
-  }
+    "listEmittedFiles": true,
+
+    // [ VITE ]
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

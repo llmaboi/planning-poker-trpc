@@ -12,7 +12,7 @@ export interface ServerOptions {
 
 export function createServer(opts: ServerOptions) {
   const dev = opts.dev ?? true;
-  const port = opts.port ?? 3000;
+  const port = opts.port ?? 3030;
   const prefix = opts.prefix ?? '/trpc';
   const server = fastify({ logger: dev });
 

@@ -1,3 +1,16 @@
+# Old package.json
+
+```
+  "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+
+    // "build": "tsc",
+    "dev:server": "tsx watch src/server",
+    "dev:client": "wait-port 3030 && tsx watch src/client",
+    // "dev": "run-p dev:* --print-label",
+```
+
 # Fastify adapter example
 
 - Fastify server with WebSocket
