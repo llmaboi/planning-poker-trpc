@@ -2,7 +2,7 @@ import { ReactNode, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import './App.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { trpc } from './client/utils/trpc';
+import { trpc } from './utils/trpc';
 import { httpBatchLink, splitLink, wsLink, createWSClient } from '@trpc/client';
 import superjson from 'superjson';
 import { serverConfig } from './config';

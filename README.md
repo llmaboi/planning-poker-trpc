@@ -7,7 +7,7 @@
 
     // "build": "tsc",
     "dev:server": "tsx watch src/server",
-    "dev:client": "wait-port 3030 && tsx watch src/client",
+    "dev:client": "wait-port 3030 && tsx watch src/web",
     // "dev": "run-p dev:* --print-label",
 ```
 

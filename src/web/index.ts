@@ -6,7 +6,7 @@ import {
   wsLink,
 } from '@trpc/client';
 import superjson from 'superjson';
-import { serverConfig } from '../config';
+import { serverConfig } from './config';
 import type { AppRouter } from '../server/router';
 import './polyfill';
 

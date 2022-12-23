@@ -4,8 +4,8 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // root: path.join(__dirname, 'src/client'),
-  // publicDir: path.join(__dirname, 'src/client/public'),
+  root: path.join(__dirname, 'src/web'),
+  publicDir: path.join(__dirname, 'src/web/public'),
   server: {
     proxy: {
       '/trpc/api': 'http://localhost:3030',

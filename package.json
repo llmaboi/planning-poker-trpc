@@ -12,7 +12,7 @@
     "start:server": "node dist/server/index.js",
     "start:client": "wait-port 3030 && node dist/client/index.js",
     "start": "run-p start:* --print-label",
-    "test-dev": "start-server-and-test 'tsx src/server' http-get://localhost:3030 'tsx src/client'",
+    "test-dev": "start-server-and-test 'tsx src/server' http-get://localhost:3030 'tsx src/web'",
     "test-start": "start-server-and-test 'node dist/server' http-get://localhost:3030 'node dist/client'"
   },
   "dependencies": {

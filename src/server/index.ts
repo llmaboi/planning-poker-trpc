@@ -1,4 +1,4 @@
-import { serverConfig } from '../config';
+import { serverConfig } from '../web/config';
 import { createServer } from './server';
 
 const server = createServer(serverConfig);
