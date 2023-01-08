@@ -32,7 +32,7 @@
     // [ Module Resolution ]
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
 
     // [ Advanced ]
     "skipLibCheck": true,
@@ -50,5 +50,11 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "ts-node": {
+    "esm": true
+  },
+  "paths": {
+    "@/*": ["src/*"]
+  }
 }
