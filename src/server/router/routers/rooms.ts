@@ -1,32 +1,59 @@
-import { TRPCError } from '@trpc/server';
-import { RowDataPacket } from 'mysql2';
 import { z } from 'zod';
-import { createdServer } from '../..';
-import { ZodRoom, ZodRoomRaw } from '../../models';
-import { publicProcedure, router } from '../trpc';
+import {
+  createRoom,
+  getRoom,
+  getRooms,
+  updateRoom,
+  updateRoomDisplayCards,
+} from '../../methods/mysqlRooms';
+import { ZodRoom } from '../../models';
+import { publicProcedure, trpcRouter } from '../trpc';
 
-export const roomsRouter = router({
+export const roomsRouter = trpcRouter({
   create: publicProcedure
     .input(ZodRoom.omit({ id: true }))
     .mutation(async ({ input, ctx }) => {
-      if (ctx.user.name !== 'nyan') {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
-      // const id = db.posts.length + 1;
-      // const post = { id, ...input };
-      // db.posts.push(post);
-      // const a = await ctx.
-      return { name: 'wazzer' };
+      return createRoom(ctx.mysql, {
+        label: input.label,
+        name: input.name,
+        showVotes: input.showVotes,
+      });
+    }),
+  byId: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(({ input, ctx }) => {
+      return getRoom(ctx.mysql, input.id.toString());
     }),
   list: publicProcedure.query(async ({ ctx }) => {
-    const queryString = 'SELECT * FROM Rooms';
-
-    const [rows] = await ctx.mysql.query<RowDataPacket[]>(queryString);
-    const data = rows.map((row) => ZodRoomRaw.parse(row));
-
-    return data;
+    return getRooms(ctx.mysql);
   }),
-  reset: publicProcedure.mutation(() => {
-    // db.posts = [];
+  update: publicProcedure.input(ZodRoom).mutation(({ ctx, input }) => {
+    return updateRoom(ctx.mysql, {
+      id: input.id,
+      label: input.label,
+      name: input.name,
+      showVotes: input.showVotes,
+    });
   }),
+  reset: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const displaysRaw = await updateRoomDisplayCards(
+        ctx.mysql,
+        input.id.toString()
+      );
+
+      // TODO: Websocket stuff...
+      // const roomSocket = roomDisplaysSockets.get(parseInt(id));
+
+      // if (roomSocket) {
+      //   roomSocket.forEach((socket) => {
+      //     if (socket.OPEN) {
+      //       socket.send(JSON.stringify(displaysRaw));
+      //     }
+      //   });
+      // }
+
+      return displaysRaw;
+    }),
 });

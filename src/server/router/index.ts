@@ -1,14 +1,12 @@
-import { apiRouter } from './routers/api';
-import { postsRouter } from './routers/posts';
+import { displaysRouter } from './routers/displays';
 import { roomsRouter } from './routers/rooms';
 import { subRouter } from './routers/sub';
-import { router } from './trpc';
+import { trpcRouter } from './trpc';
 
-export const appRouter = router({
-  posts: postsRouter,
-  sub: subRouter,
-  api: apiRouter,
+export const appRouter = trpcRouter({
+  displays: displaysRouter,
   rooms: roomsRouter,
+  sub: subRouter,
 });
 
 export type AppRouter = typeof appRouter;

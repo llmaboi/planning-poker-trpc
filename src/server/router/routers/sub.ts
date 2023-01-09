@@ -1,7 +1,7 @@
 import { observable } from '@trpc/server/observable';
-import { publicProcedure, router } from '../trpc';
+import { publicProcedure, trpcRouter } from '../trpc';
 
-export const subRouter = router({
+export const subRouter = trpcRouter({
   randomNumber: publicProcedure.subscription(({ ctx }) => {
     return observable<{ randomNumber: number }>((emit) => {
       const timer = setInterval(() => {
