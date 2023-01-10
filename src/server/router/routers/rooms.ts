@@ -6,42 +6,64 @@ import {
   updateRoom,
   updateRoomDisplayCards,
 } from '../../methods/mysqlRooms';
-import { ZodRoom } from '../../models';
+import { Display, Room, RoomRaw, ZodRoom } from '../../models';
 import { publicProcedure, trpcRouter } from '../trpc';
+import { transformDisplay } from './displays';
+
+function transformRoom(roomRaw: RoomRaw): Room {
+  return {
+    id: roomRaw.id,
+    label: roomRaw.label,
+    name: roomRaw.name,
+    showVotes: roomRaw.show_votes === 1,
+  };
+}
 
 export const roomsRouter = trpcRouter({
   create: publicProcedure
     .input(ZodRoom.omit({ id: true }))
-    .mutation(async ({ input, ctx }) => {
-      return createRoom(ctx.mysql, {
+    .mutation(async function ({ input, ctx }): Promise<Room> {
+      const { data } = await createRoom(ctx.mysql, {
         label: input.label,
         name: input.name,
         showVotes: input.showVotes,
       });
+
+      return transformRoom(data);
     }),
   byId: publicProcedure
     .input(z.object({ id: z.number() }))
-    .query(({ input, ctx }) => {
-      return getRoom(ctx.mysql, input.id.toString());
+    .query(async function ({ input, ctx }): Promise<Room> {
+      const { data } = await getRoom(ctx.mysql, input.id.toString());
+
+      return transformRoom(data);
     }),
-  list: publicProcedure.query(async ({ ctx }) => {
-    return getRooms(ctx.mysql);
+  list: publicProcedure.query(async function ({ ctx }): Promise<Room[]> {
+    const { data } = await getRooms(ctx.mysql);
+
+    return data.map(transformRoom);
   }),
-  update: publicProcedure.input(ZodRoom).mutation(({ ctx, input }) => {
-    return updateRoom(ctx.mysql, {
-      id: input.id,
-      label: input.label,
-      name: input.name,
-      showVotes: input.showVotes,
-    });
-  }),
+  update: publicProcedure
+    .input(ZodRoom)
+    .mutation(async function ({ ctx, input }): Promise<Room> {
+      const { data } = await updateRoom(ctx.mysql, {
+        id: input.id,
+        label: input.label,
+        name: input.name,
+        showVotes: input.showVotes,
+      });
+
+      return transformRoom(data);
+    }),
   reset: publicProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ ctx, input }) => {
-      const displaysRaw = await updateRoomDisplayCards(
+    .mutation(async function ({ ctx, input }): Promise<Display[]> {
+      const { data } = await updateRoomDisplayCards(
         ctx.mysql,
         input.id.toString()
       );
+
+      const displays = data.map(transformDisplay);
 
       // TODO: Websocket stuff...
       // const roomSocket = roomDisplaysSockets.get(parseInt(id));
@@ -54,6 +76,6 @@ export const roomsRouter = trpcRouter({
       //   });
       // }
 
-      return displaysRaw;
+      return displays;
     }),
 });

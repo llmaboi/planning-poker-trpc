@@ -1,0 +1,11 @@
+.cards-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.reset-selection {
+  text-align: center;
+  margin-top: 1rem;
+}

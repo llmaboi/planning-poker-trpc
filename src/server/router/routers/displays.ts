@@ -1,3 +1,4 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import {
   createDisplay,
@@ -6,20 +7,32 @@ import {
   getDisplaysForRoom,
   updateDisplay,
 } from '../../methods/mysqlDisplays';
-import { ZodDisplay } from '../../models';
+import { Display, DisplayRaw, ZodDisplay } from '../../models';
 import { publicProcedure, trpcRouter } from '../trpc';
+
+export function transformDisplay(rawDisplay: DisplayRaw): Display {
+  return {
+    cardValue: rawDisplay.card_value,
+    id: rawDisplay.id,
+    isHost: rawDisplay.is_host === 1,
+    name: rawDisplay.name,
+    roomId: rawDisplay.room_id,
+  };
+}
 
 // TODO: Should I format the data in non-snake case?
 export const displaysRouter = trpcRouter({
   create: publicProcedure
     .input(ZodDisplay.omit({ id: true }))
-    .mutation(({ input, ctx }) => {
-      const displayData = createDisplay(ctx.mysql, {
+    .mutation(async function ({ input, ctx }): Promise<Display> {
+      const { data } = await createDisplay(ctx.mysql, {
         roomId: input.roomId,
         name: input.name,
         cardValue: input.cardValue,
         isHost: input.isHost,
       });
+
+      const display = transformDisplay(data);
 
       // TODO: Websocket stuff...
       // void getDisplaysForRoom(fastify.mysql, roomId.toString()).then(
@@ -34,7 +47,48 @@ export const displaysRouter = trpcRouter({
       //   }
       // );
 
-      return displayData;
+      return display;
+    }),
+  createOrUpdate: publicProcedure
+    .input(ZodDisplay.omit({ id: true }))
+    .mutation(async function ({ input, ctx }): Promise<Display> {
+      try {
+        const { data } = await getDisplayByName(
+          ctx.mysql,
+          input.name,
+          input.roomId
+        );
+
+        const display = transformDisplay(data);
+        // If it matches return it
+        if (
+          display.roomId === input.roomId &&
+          display.cardValue === input.cardValue &&
+          display.isHost === input.isHost
+        ) {
+          return display;
+        }
+
+        // otherwise update then return updated value
+        const { data: updatedDisplayRaw } = await updateDisplay(ctx.mysql, {
+          cardValue: input.cardValue,
+          id: display.id,
+          isHost: input.isHost,
+          name: input.name,
+          roomId: input.roomId,
+        });
+
+        return transformDisplay(updatedDisplayRaw);
+      } catch (error) {
+        const { data } = await createDisplay(ctx.mysql, {
+          roomId: input.roomId,
+          name: input.name,
+          cardValue: input.cardValue,
+          isHost: input.isHost,
+        });
+
+        return transformDisplay(data);
+      }
     }),
   byName: publicProcedure
     .input(
@@ -43,8 +97,14 @@ export const displaysRouter = trpcRouter({
         roomId: z.number(),
       })
     )
-    .query(({ input, ctx }) => {
-      return getDisplayByName(ctx.mysql, input.name, input.roomId);
+    .query(async function ({ input, ctx }): Promise<Display> {
+      const { data } = await getDisplayByName(
+        ctx.mysql,
+        input.name,
+        input.roomId
+      );
+
+      return transformDisplay(data);
     }),
   byId: publicProcedure
     .input(
@@ -52,8 +112,10 @@ export const displaysRouter = trpcRouter({
         id: z.number(),
       })
     )
-    .query(({ input, ctx }) => {
-      return getDisplay(ctx.mysql, input.id.toString());
+    .query(async function ({ input, ctx }): Promise<Display> {
+      const { data } = await getDisplay(ctx.mysql, input.id.toString());
+
+      return transformDisplay(data);
     }),
   listByRoom: publicProcedure
     .input(
@@ -61,33 +123,39 @@ export const displaysRouter = trpcRouter({
         id: z.string(),
       })
     )
-    .query(({ input, ctx }) => {
-      return getDisplaysForRoom(ctx.mysql, input.id);
+    .query(async function ({ input, ctx }): Promise<Display[]> {
+      const { data } = await getDisplaysForRoom(ctx.mysql, input.id);
+
+      return data.map(transformDisplay);
     }),
-  update: publicProcedure.input(ZodDisplay).mutation(async ({ ctx, input }) => {
-    const displayData = await updateDisplay(ctx.mysql, {
-      cardValue: input.cardValue,
-      id: input.id,
-      isHost: input.isHost,
-      name: input.name,
-      roomId: input.roomId,
-    });
+  update: publicProcedure
+    .input(ZodDisplay)
+    .mutation(async function ({ ctx, input }): Promise<Display> {
+      const { data } = await updateDisplay(ctx.mysql, {
+        cardValue: input.cardValue,
+        id: input.id,
+        isHost: input.isHost,
+        name: input.name,
+        roomId: input.roomId,
+      });
 
-    // TODO: Websocket stuff...
-    // void getDisplaysForRoom(ctx.mysql, input.roomId.toString()).then(
-    //   (displays) => {
-    //     Array.from(roomDisplaysSockets.values()).forEach((socket) => {
-    //       socket.forEach((webSocket) => {
-    //         if (webSocket.OPEN) {
-    //           webSocket.send(JSON.stringify(displays));
-    //         }
-    //       });
-    //     });
-    //   }
-    // );
+      const display = transformDisplay(data);
 
-    return displayData;
-  }),
+      // TODO: Websocket stuff...
+      // void getDisplaysForRoom(ctx.mysql, input.roomId.toString()).then(
+      //   (displays) => {
+      //     Array.from(roomDisplaysSockets.values()).forEach((socket) => {
+      //       socket.forEach((webSocket) => {
+      //         if (webSocket.OPEN) {
+      //           webSocket.send(JSON.stringify(displays));
+      //         }
+      //       });
+      //     });
+      //   }
+      // );
+
+      return display;
+    }),
 
   // TODO: Socket stuff....
   // fastify.get<GetDisplayParams>(

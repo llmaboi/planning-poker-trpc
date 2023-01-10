@@ -1,0 +1,15 @@
+.card-component {
+  border: 2px solid;
+  height: 150px;
+  width: 90px;
+  margin: 5px;
+  align-items: center;
+}
+
+.card-component.disabled {
+  color: red;
+  cursor: not-allowed;
+}
+.card-component.selected {
+  color: green;
+}
