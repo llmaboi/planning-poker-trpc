@@ -9,7 +9,8 @@ let websocket: any;
 
 function connectWebsocket(urlEnd: string) {
   if (!websocket) {
-    websocket = createWSClient({ url: `ws://${urlEnd}` });
+    websocket = createWSClient({ url: `ws://localhost:3031/socket` });
+    // websocket = createWSClient({ url: `ws://${urlEnd}` });
   }
 
   return { wsClient: websocket };

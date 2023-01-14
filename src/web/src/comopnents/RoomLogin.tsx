@@ -11,6 +11,18 @@ function RoomList({
   roomSearch: string;
 }) {
   const { data: rooms, isLoading, isError } = trpc.rooms.list.useQuery();
+  const { mutate } = trpc.displays.bump.useMutation();
+  trpc.displays.socket.useSubscription(
+    { message: 'front' },
+    {
+      onData(data) {
+        console.log(data);
+      },
+      onError(err) {
+        console.error(err);
+      },
+    }
+  );
 
   if (isLoading) {
     return <p>Loading rooms...</p>;
@@ -26,9 +38,17 @@ function RoomList({
     return room.name.toLowerCase().includes(roomSearch.toLowerCase());
   });
 
+  function tryMe() {
+    mutate({ message: 'wazzer' });
+  }
+
   return (
     <>
       <ul>
+        <li>
+          <button onClick={tryMe}>TEST</button>
+        </li>
+
         {filteredRooms.map((room) => {
           return (
             <li key={room.id}>

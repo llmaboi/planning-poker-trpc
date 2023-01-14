@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "run-p dev:* --print-label",
     "dev:server": "tsx watch src/server",
+    "dev2:wss": "wait-port 3030 && tsx watch src/server/wsServer.ts",
     "dev:client": "wait-port 3030 && vite",
     "build": "tsc && vite build",
     "preview": "vite preview",

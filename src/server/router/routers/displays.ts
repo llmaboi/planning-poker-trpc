@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+import { observable } from '@trpc/server/observable';
 import { z } from 'zod';
 import {
   createDisplay,
@@ -155,6 +156,36 @@ export const displaysRouter = trpcRouter({
       // );
 
       return display;
+    }),
+
+  // Named: "onSendMessage"
+  socket: publicProcedure
+    .input(z.object({ message: z.string() }))
+    .subscription(({ ctx, input }) => {
+      //
+      return observable((emit) => {
+        function onMessageUpdate(data: unknown) {
+          console.log('onMessageUpdate', data);
+          emit.next({ message: 'testing', data });
+        }
+
+        ctx.req.socket.on('testing', onMessageUpdate);
+        ctx.emitter.on('testing', onMessageUpdate);
+
+        return () => {
+          ctx.req.socket.off('testing', onMessageUpdate);
+          ctx.emitter.off('testing', onMessageUpdate);
+        };
+      });
+    }),
+
+  bump: publicProcedure
+    .input(z.object({ message: z.string() }))
+    .mutation(({ ctx, input }) => {
+      ctx.req.socket.emit('testing', input);
+      console.log('bump: ', input);
+      ctx.emitter.emit('testing', input);
+      return input.message;
     }),
 
   // TODO: Socket stuff....

@@ -6,22 +6,21 @@ import { IncomingMessage } from 'http';
 import ws from 'ws';
 import { createdServer } from '..';
 
-export interface User {
-  name: string | string[];
-}
+// export interface User {
+//   name: string | string[];
+// }
+const emitter = new EventEmitter();
 
 export function createContext({
-  req,
-  res,
-}: CreateFastifyContextOptions &
-  NodeHTTPCreateContextFnOptions<IncomingMessage, ws>) {
-  const user: User = { name: req.headers['username'] ?? 'anonymous' };
-  const emitter = new EventEmitter();
+  ...opts
+}:
+  | CreateFastifyContextOptions
+  | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>) {
+  // const user: User = { name: req.headers['username'] ?? 'anonymous' };
 
   return {
-    req,
-    res,
-    user,
+    ...opts,
+    // user,
     mysql: createdServer.server.mysql,
     emitter,
   };
