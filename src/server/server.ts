@@ -1,5 +1,4 @@
 import fastifyMysql, { MySQLPromisePool } from '@fastify/mysql';
-import ws from '@fastify/websocket';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import fastify from 'fastify';
@@ -37,19 +36,7 @@ const envToLogger = {
   test: false,
 };
 
-// import { applyWSSHandler } from '@trpc/server/adapters/ws';
-import fetch from 'node-fetch';
-// import { WebSocketServer } from 'ws';
-// import ws from 'ws';
-// import { appRouter } from './router';
-// import { createContext } from './router/context';
-
-if (!global.fetch) {
-  (global as any).fetch = fetch;
-}
-
 const wss = new WebSocketServer({
-  // const wss = new ws.Server({
   host: 'localhost',
   port: 3031,
   path: '/socket',
@@ -59,20 +46,8 @@ export function createServer(opts: ServerOptions) {
   const dev = opts.dev ?? true;
   const port = opts.port ?? 3030;
   const prefix = opts.prefix ?? '/trpc';
-  console.log('dev: ', dev);
   const logger = dev ? envToLogger['development'] : envToLogger['production'];
   const server = fastify({ logger });
-
-  // console.log('register WS');
-  // server.register(ws, {
-  //   prefix: '/trpc/socket',
-  //   // options: {
-  //   //   port: 3031,
-  //   // },
-  // });
-  // console.log('after register WS');
-
-  console.log('wss: ', wss);
 
   const handler = applyWSSHandler({
     wss,
@@ -97,7 +72,6 @@ export function createServer(opts: ServerOptions) {
   });
 
   server.register(fastifyMysql, {
-    // host: 'localhost',
     database: opts.mysqlName,
     user: opts.mysqlUser,
     password: opts.mysqlPassword,
@@ -106,7 +80,6 @@ export function createServer(opts: ServerOptions) {
   });
 
   server.get('/', async () => {
-    console.log('wazzo', server.mysql);
     return { hello: 'wait-on 💨' };
   });
 

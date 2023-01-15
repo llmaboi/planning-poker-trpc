@@ -85,7 +85,11 @@ async function updateRoomDisplayCards(
 
   const [result] = await connection.query<ResultSetHeader>(queryString);
 
-  if (result.warningStatus === 0 && result.serverStatus === 2) {
+  if (
+    result.warningStatus === 0
+    // Unsure about serverStatus...
+    // && result.serverStatus === 2
+  ) {
     return getDisplaysForRoom(connection, roomId);
   }
 

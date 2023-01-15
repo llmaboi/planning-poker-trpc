@@ -1,6 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { Display } from '../../../server/models/Display';
+import { useParams } from '@tanstack/react-router';
 import { trpc } from '../../utils/trpc';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import Card from './Card';
@@ -14,66 +12,32 @@ interface Card {
   number: number;
 }
 
-function NoRoomOrDisplay() {
-  const navigate = useNavigate({ from: '/room/$roomId' });
-
-  function findRoom() {
-    navigate({ to: '/' });
-  }
-
-  return (
-    <div>
-      You must be logged in or authorized.{' '}
-      <button onClick={findRoom}>Find Room</button>
-    </div>
-  );
-}
-
-function HasRoomAndDisplay({
-  roomId,
-  displayName,
-}: {
-  roomId: number;
-  displayName: string;
-}) {
+export default function Room() {
+  const { displayId } = useParams({ from: '/room/$roomId/$displayId' });
   const { roomDisplays } = useRoomDisplays();
-  const [currentDisplay, setCurrentDisplay] = useState<Display>();
   const displayMutation = trpc.displays.update.useMutation();
-  const displays = roomDisplays.displays;
 
-  useEffect(() => {
-    if (roomDisplays.displays) {
-      const found = displays.find((display) => {
-        return display.name === displayName;
-      });
-      if (found) {
-        setCurrentDisplay(found);
-      } else {
-        currentDisplay &&
-          setCurrentDisplay({ ...currentDisplay, cardValue: 0 });
-      }
-    }
-  }, [roomDisplays, displayName]);
+  const display = roomDisplays.displays.find(
+    (displayItem) => displayItem.id === displayId
+  );
 
   function updateDisplayCardValue(number: number) {
-    if (currentDisplay) {
+    if (display)
       displayMutation.mutate({
-        ...currentDisplay,
+        ...display,
         cardValue: number,
       });
-    }
   }
 
   function resetSelection() {
-    if (currentDisplay) {
+    if (display)
       displayMutation.mutate({
-        ...currentDisplay,
+        ...display,
         cardValue: 0,
       });
-    }
   }
 
-  const selectedNumber = currentDisplay?.cardValue;
+  const selectedNumber = display?.cardValue;
 
   return (
     <>
@@ -93,36 +57,13 @@ function HasRoomAndDisplay({
         })}
       </div>
 
-      {displays && <NameVoted />}
+      {roomDisplays && <NameVoted />}
 
-      {displays && <PieData />}
+      {roomDisplays && <PieData />}
 
       <div className='reset-selection'>
         <button onClick={resetSelection}>Reset Selection</button>
       </div>
     </>
-  );
-}
-
-export default function Room() {
-  const { roomId } = useParams({ from: '/room/$roomId' });
-  // const { state } = useLocation();
-
-  if (
-    !roomId
-    //  || !state ||
-    //   (state && !state.displayName)
-  ) {
-    return <NoRoomOrDisplay />;
-  }
-
-  return (
-    <HasRoomAndDisplay
-      roomId={roomId}
-      displayName={
-        ''
-        // state.displayName
-      }
-    />
   );
 }

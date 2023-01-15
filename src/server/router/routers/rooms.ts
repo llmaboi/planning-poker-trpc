@@ -8,7 +8,7 @@ import {
 } from '../../methods/mysqlRooms';
 import { Display, Room, RoomRaw, ZodRoom } from '../../models';
 import { publicProcedure, trpcRouter } from '../trpc';
-import { transformDisplay } from './displays';
+import { SocketKeys, transformDisplay } from './displays';
 
 function transformRoom(roomRaw: RoomRaw): Room {
   return {
@@ -56,25 +56,16 @@ export const roomsRouter = trpcRouter({
       return transformRoom(data);
     }),
   reset: publicProcedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ roomId: z.number() }))
     .mutation(async function ({ ctx, input }): Promise<Display[]> {
       const { data } = await updateRoomDisplayCards(
         ctx.mysql,
-        input.id.toString()
+        input.roomId.toString()
       );
 
       const displays = data.map(transformDisplay);
 
-      // TODO: Websocket stuff...
-      // const roomSocket = roomDisplaysSockets.get(parseInt(id));
-
-      // if (roomSocket) {
-      //   roomSocket.forEach((socket) => {
-      //     if (socket.OPEN) {
-      //       socket.send(JSON.stringify(displaysRaw));
-      //     }
-      //   });
-      // }
+      ctx.emitter.emit(SocketKeys.display, displays);
 
       return displays;
     }),

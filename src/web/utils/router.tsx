@@ -9,6 +9,7 @@ import NoPathFound from '../src/comopnents/NoPathFound';
 import Room from '../src/comopnents/Room';
 import RoomLogin from '../src/comopnents/RoomLogin';
 import AuthLayout from '../src/layouts/Auth.layout';
+import { trpc } from './trpc';
 
 // TODO: Actual main file, remove above later.
 const rootRoute = createRouteConfig({
@@ -40,13 +41,19 @@ const noDisplayRoute = rootRoute.createRoute({
 // .addChildren([displayConnectRoute]);
 
 const roomRoute = rootRoute.createRoute({
-  path: '/room/$roomId',
+  path: '/room/$roomId/$displayId',
   component: Room,
   parseParams: (params) => {
-    return { roomId: parseInt(params.roomId) };
+    return {
+      roomId: parseInt(params.roomId),
+      displayId: parseInt(params.displayId),
+    };
   },
-  stringifyParams: ({ roomId }) => {
-    return { roomId: roomId.toString() };
+  stringifyParams: ({ roomId, displayId }) => {
+    return {
+      roomId: roomId.toString(),
+      displayId: displayId.toString(),
+    };
   },
 });
 

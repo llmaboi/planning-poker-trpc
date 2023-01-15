@@ -35,19 +35,16 @@ export function Wrapper({ children }: { children: ReactNode }) {
             return op.type === 'subscription';
           },
           true: wsLink({ client: wsClient }),
-          false: httpBatchLink({ url: `http://localhost:3000/trpc` }),
-          // true: httpBatchLink({ url: `http://localhost:3000/trpc` }),
-          // false: httpBatchLink({ url: `http://${urlEnd}` }),
+          false: httpBatchLink({
+            url: `http://localhost:3000/trpc`,
+            // optional
+            // headers() {
+            //   return {
+            //     authorization: getAuthCookie(),
+            //   };
+            // },
+          }),
         }),
-        // httpBatchLink({
-        //   url: 'http://localhost:3030/trpc',
-        // optional
-        // headers() {
-        //   return {
-        //     authorization: getAuthCookie(),
-        //   };
-        // },
-        // }),
       ],
     })
   );

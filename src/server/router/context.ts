@@ -6,6 +6,7 @@ import { IncomingMessage } from 'http';
 import ws from 'ws';
 import { createdServer } from '..';
 
+// TODO: maybe add an "auth ctx" for a room && display?
 // export interface User {
 //   name: string | string[];
 // }
