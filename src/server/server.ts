@@ -1,10 +1,9 @@
 import fastifyMysql, { MySQLPromisePool } from '@fastify/mysql';
+import ws from '@fastify/websocket';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
-import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import fastify from 'fastify';
 import { appRouter } from './router';
 import { createContext } from './router/context';
-import { WebSocketServer } from 'ws';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -36,12 +35,6 @@ const envToLogger = {
   test: false,
 };
 
-const wss = new WebSocketServer({
-  host: 'localhost',
-  port: 3031,
-  path: '/socket',
-});
-
 export function createServer(opts: ServerOptions) {
   const dev = opts.dev ?? true;
   const port = opts.port ?? 3030;
@@ -49,27 +42,7 @@ export function createServer(opts: ServerOptions) {
   const logger = dev ? envToLogger['development'] : envToLogger['production'];
   const server = fastify({ logger });
 
-  const handler = applyWSSHandler({
-    wss,
-    router: appRouter,
-    createContext,
-  });
-
-  wss.on('connection', (ws) => {
-    console.log(`➕➕ Connection (${wss.clients.size})`);
-
-    ws.once('close', () => {
-      console.log(`➖➖ Connection (${wss.clients.size})`);
-    });
-  });
-
-  console.log('✅ WebSocket Server listening on ws://localhost:3031');
-
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM');
-    handler.broadcastReconnectNotification();
-    wss.close();
-  });
+  server.register(ws);
 
   server.register(fastifyMysql, {
     database: opts.mysqlName,
@@ -85,7 +58,7 @@ export function createServer(opts: ServerOptions) {
 
   server.register(fastifyTRPCPlugin, {
     prefix,
-    // useWSS: true,
+    useWSS: true,
     trpcOptions: { router: appRouter, createContext },
   });
 

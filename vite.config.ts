@@ -11,15 +11,8 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/trpc': {
           target: 'http://localhost:3030',
-          // ws: true,
         },
-
-        // '/socket': {
-        //   target: 'ws://localhost:3031',
-        //   ws: true,
-        // },
       },
-      // host: '0.0.0.0',
       port: 3000,
     },
     resolve: {

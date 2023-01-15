@@ -1,16 +1,21 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createWSClient, httpBatchLink, splitLink, wsLink } from '@trpc/client';
+import {
+  createWSClient,
+  httpBatchLink,
+  splitLink,
+  TRPCWebSocketClient,
+  wsLink,
+} from '@trpc/client';
 import { ReactNode, useState } from 'react';
 import superjson from 'superjson';
 import { serverConfig } from '../../../config';
 import { trpc } from '../../../utils/trpc';
 
-let websocket: any;
+let websocket: TRPCWebSocketClient;
 
 function connectWebsocket(urlEnd: string) {
   if (!websocket) {
-    websocket = createWSClient({ url: `ws://localhost:3031/socket` });
-    // websocket = createWSClient({ url: `ws://${urlEnd}` });
+    websocket = createWSClient({ url: `ws://${urlEnd}` });
   }
 
   return { wsClient: websocket };
