@@ -8,7 +8,6 @@ import {
 } from '@trpc/client';
 import { ReactNode, useState } from 'react';
 import superjson from 'superjson';
-import { serverConfig } from '../../../config';
 import { trpc } from '../../../utils/trpc';
 
 let websocket: TRPCWebSocketClient;
@@ -24,11 +23,9 @@ function connectWebsocket(urlEnd: string) {
 export function Wrapper({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
-  const { port, prefix } = serverConfig;
+  const port = import.meta.env.VITE_API_PORT;
+  const prefix = import.meta.env.VITE_API_PREFIX;
   const urlEnd = `localhost:${port}${prefix}`;
-  console.log('urlEnd: ', urlEnd);
-  console.log(`http://${urlEnd}`);
-
   const { wsClient } = connectWebsocket(urlEnd);
 
   const [trpcClient] = useState(() =>

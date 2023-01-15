@@ -66,7 +66,6 @@ export function createServer(opts: ServerOptions) {
   const start = async () => {
     try {
       await server.listen({ port });
-      console.log('listening on port', port);
     } catch (err) {
       server.log.error(err);
       process.exit(1);
