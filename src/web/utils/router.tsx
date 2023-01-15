@@ -1,15 +1,10 @@
-import {
-  createReactRouter,
-  createRouteConfig,
-  Outlet,
-} from '@tanstack/react-router';
+import { createReactRouter, createRouteConfig } from '@tanstack/react-router';
 import DisplayLogin from '../src/comopnents/DisplayLogin';
 import NoDisplay from '../src/comopnents/NoDisplay';
 import NoPathFound from '../src/comopnents/NoPathFound';
 import Room from '../src/comopnents/Room';
 import RoomLogin from '../src/comopnents/RoomLogin';
 import AuthLayout from '../src/layouts/Auth.layout';
-import { trpc } from './trpc';
 
 // TODO: Actual main file, remove above later.
 const rootRoute = createRouteConfig({
@@ -35,7 +30,6 @@ const displayConnectRoute = rootRoute.createRoute({
 
 const noDisplayRoute = rootRoute.createRoute({
   path: '/',
-  // component: Index,
   component: RoomLogin,
 });
 // .addChildren([displayConnectRoute]);
