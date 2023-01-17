@@ -6,9 +6,9 @@ import {
   getDisplayByName,
   getDisplaysForRoom,
   updateDisplay,
-} from '../../methods/mysqlDisplays';
-import { Display, DisplayRaw, ZodDisplay } from '../../models';
-import { publicProcedure, trpcRouter } from '../trpc';
+} from '../../methods/mysqlDisplays.js';
+import { Display, DisplayRaw, ZodDisplay } from '../../models/index.js';
+import { publicProcedure, trpcRouter } from '../trpc.js';
 
 export function transformDisplay(rawDisplay: DisplayRaw): Display {
   return {

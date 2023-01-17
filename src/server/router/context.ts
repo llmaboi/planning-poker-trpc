@@ -4,7 +4,7 @@ import { NodeHTTPCreateContextFnOptions } from '@trpc/server/dist/adapters/node-
 import EventEmitter from 'events';
 import { IncomingMessage } from 'http';
 import ws from 'ws';
-import { createdServer } from '..';
+import { createdServer } from '../index.js';
 
 // TODO: maybe add an "auth ctx" for a room && display?
 // export interface User {

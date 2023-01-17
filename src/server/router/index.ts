@@ -1,6 +1,6 @@
-import { displaysRouter } from './routers/displays';
-import { roomsRouter } from './routers/rooms';
-import { trpcRouter } from './trpc';
+import { displaysRouter } from './routers/displays.js';
+import { roomsRouter } from './routers/rooms.js';
+import { trpcRouter } from './trpc.js';
 
 export const appRouter = trpcRouter({
   displays: displaysRouter,

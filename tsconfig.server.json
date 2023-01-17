@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "ESNext",
+    "target": "ES2019",
+    "lib": ["ES2019", "DOM"],
+    "isolatedModules": false,
+    "noEmit": false
+  },
+  "include": [
+    "src/server",
+    "tsconfig.json",
+    "tsconfig.server.json",
+    "tsconfig.node.json"
+  ]
+}

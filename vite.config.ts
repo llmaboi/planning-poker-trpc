@@ -5,16 +5,31 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+
+  const baseUrl = process.env.VITE_BASE_URL;
+  const apiPort = process.env.VITE_API_PORT;
+  const apiPrefix = process.env.VITE_API_PREFIX;
+  const fullApiUrl = `http://${baseUrl}:${apiPort}`;
+
+  const appPort = parseInt(process.env.VITE_APP_PORT);
+
+  console.log('fullApiUrl: ', fullApiUrl);
+  console.log('appPort: ', appPort);
+
   return {
     root: path.join(__dirname, 'src/web'),
     publicDir: path.join(__dirname, 'src/web/public'),
+    build: {
+      outDir: '../../dist/client',
+      emptyOutDir: true,
+    },
     server: {
       proxy: {
         '/trpc': {
-          target: 'http://localhost:3030',
+          target: fullApiUrl,
         },
       },
-      port: 3000,
+      port: appPort,
     },
     resolve: {
       alias: {

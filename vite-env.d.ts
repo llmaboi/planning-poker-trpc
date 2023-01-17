@@ -8,6 +8,9 @@ interface ImportMetaEnv {
 
   readonly VITE_API_PORT: number;
   readonly VITE_API_PREFIX: string;
+
+  readonly VITE_BASE_URL: string;
+  readonly VITE_APP_PORT: number;
 }
 
 interface ImportMeta {

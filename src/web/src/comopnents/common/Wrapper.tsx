@@ -23,10 +23,16 @@ function connectWebsocket(urlEnd: string) {
 export function Wrapper({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
-  const port = import.meta.env.VITE_API_PORT;
-  const prefix = import.meta.env.VITE_API_PREFIX;
-  const urlEnd = `localhost:${port}${prefix}`;
-  const { wsClient } = connectWebsocket(urlEnd);
+  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const apiPort = import.meta.env.VITE_API_PORT;
+  const apiPrefix = import.meta.env.VITE_API_PREFIX;
+
+  const socketUrl = `${baseUrl}:${apiPort}${apiPrefix}`;
+  const { wsClient } = connectWebsocket(socketUrl);
+
+  const appPort = import.meta.env.VITE_APP_PORT;
+  const appUrl = `http://${baseUrl}:${appPort}${apiPrefix}`;
+  console.log('appUrl: ', appUrl);
 
   const [trpcClient] = useState(() =>
     trpc.createClient({
@@ -38,7 +44,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
           },
           true: wsLink({ client: wsClient }),
           false: httpBatchLink({
-            url: `http://localhost:3000/trpc`,
+            url: appUrl,
             // optional
             // headers() {
             //   return {

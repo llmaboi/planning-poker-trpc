@@ -5,10 +5,10 @@ import {
   getRooms,
   updateRoom,
   updateRoomDisplayCards,
-} from '../../methods/mysqlRooms';
-import { Display, Room, RoomRaw, ZodRoom } from '../../models';
-import { publicProcedure, trpcRouter } from '../trpc';
-import { SocketKeys, transformDisplay } from './displays';
+} from '../../methods/mysqlRooms.js';
+import { Display, Room, RoomRaw, ZodRoom } from '../../models/index.js';
+import { publicProcedure, trpcRouter } from '../trpc.js';
+import { SocketKeys, transformDisplay } from './displays.js';
 
 function transformRoom(roomRaw: RoomRaw): Room {
   return {

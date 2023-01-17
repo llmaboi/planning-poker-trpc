@@ -1,8 +1,13 @@
 import { MySQLPromisePool } from '@fastify/mysql';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { Room, PromiseData, RoomRaw, ZodRoomRaw, DisplayRaw } from '../models';
-
-import { getDisplaysForRoom } from './mysqlDisplays';
+import {
+  Room,
+  PromiseData,
+  RoomRaw,
+  ZodRoomRaw,
+  DisplayRaw,
+} from '../models/index.js';
+import { getDisplaysForRoom } from './mysqlDisplays.js';
 
 async function createRoom(
   connection: MySQLPromisePool,
