@@ -8,20 +8,13 @@ export default defineConfig(({ mode }) => {
 
   const baseUrl = process.env.VITE_BASE_URL;
   const apiPort = process.env.VITE_API_PORT;
-  const apiPrefix = process.env.VITE_API_PREFIX;
   const fullApiUrl = `http://${baseUrl}:${apiPort}`;
 
   const appPort = parseInt(process.env.VITE_APP_PORT);
 
-  console.log('fullApiUrl: ', fullApiUrl);
-  console.log('appPort: ', appPort);
-
   return {
     root: path.join(__dirname, 'src/web'),
     publicDir: path.join(__dirname, 'src/web/public'),
-    // base: '/src/web',
-    // root: 'src/web',
-    // publicDir: 'src/web/public',
     build: {
       outDir: '../../dist/client',
       emptyOutDir: true,
