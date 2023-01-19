@@ -47,7 +47,7 @@ function RoomLogin() {
   const { mutate } = trpc.rooms.create.useMutation();
   const navigate = useNavigate({ from: '/' });
 
-  const roomNameExists = roomName && roomName.length > 0;
+  const roomNameExists = roomName.length > 0;
 
   function handleRoomNameChange(
     event: ChangeEvent<HTMLInputElement> | undefined
@@ -61,6 +61,7 @@ function RoomLogin() {
 
   function handleCreateRoom(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     if (!roomNameExists) {
       setRoomNameError(true);
       return;
@@ -95,6 +96,8 @@ function RoomLogin() {
     });
   }
 
+  // TODO: Fix a bug on "start" where you must "click" to trigger a refetch
+  //  or something displaying a blank screen.
   return (
     <>
       <h2>Search for or select your room</h2>
@@ -118,6 +121,7 @@ function RoomLogin() {
           Create room
         </button>
       </form>
+
       <RoomList onSelectRoom={handleRoomSelection} roomSearch={roomName} />
     </>
   );

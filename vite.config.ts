@@ -19,6 +19,9 @@ export default defineConfig(({ mode }) => {
   return {
     root: path.join(__dirname, 'src/web'),
     publicDir: path.join(__dirname, 'src/web/public'),
+    // base: '/src/web',
+    // root: 'src/web',
+    // publicDir: 'src/web/public',
     build: {
       outDir: '../../dist/client',
       emptyOutDir: true,

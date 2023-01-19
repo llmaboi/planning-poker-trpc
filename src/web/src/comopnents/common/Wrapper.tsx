@@ -31,8 +31,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
   const { wsClient } = connectWebsocket(socketUrl);
 
   const appPort = import.meta.env.VITE_APP_PORT;
-  const appUrl = `http://${baseUrl}:${appPort}${apiPrefix}`;
-  console.log('appUrl: ', appUrl);
+  const apiUrl = `http://${baseUrl}:${appPort}${apiPrefix}`;
 
   const [trpcClient] = useState(() =>
     trpc.createClient({
@@ -44,7 +43,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
           },
           true: wsLink({ client: wsClient }),
           false: httpBatchLink({
-            url: appUrl,
+            url: apiUrl,
             // optional
             // headers() {
             //   return {

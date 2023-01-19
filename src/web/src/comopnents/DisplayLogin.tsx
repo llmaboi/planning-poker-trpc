@@ -69,7 +69,7 @@ function DisplayLogin() {
       {
         onSuccess: (data) => {
           navigate({
-            to: '/room/$roomId/$displayId',
+            to: '/$roomId/$displayId',
             params: {
               roomId,
               displayId: data.id,

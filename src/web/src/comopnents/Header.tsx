@@ -71,7 +71,7 @@ function HostHeader({ room }: { room: Room }) {
 
 function Header() {
   const navigate = useNavigate({});
-  const { roomId, displayId } = useParams({ from: '/room/$roomId/$displayId' });
+  const { roomId, displayId } = useParams({ from: '/$roomId/$displayId' });
   const {
     data: room,
     isLoading,

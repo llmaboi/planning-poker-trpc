@@ -13,7 +13,7 @@ interface Card {
 }
 
 export default function Room() {
-  const { displayId } = useParams({ from: '/room/$roomId/$displayId' });
+  const { displayId } = useParams({ from: '/$roomId/$displayId' });
   const { roomDisplays } = useRoomDisplays();
   const displayMutation = trpc.displays.update.useMutation();
 
