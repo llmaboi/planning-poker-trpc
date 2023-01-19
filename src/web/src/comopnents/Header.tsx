@@ -1,9 +1,9 @@
-import { useRoomDisplays } from '../providers/roomDisplays.provider';
-import { ChangeEvent, useEffect, useState } from 'react';
-import './Header.css';
-import { trpc } from '../../utils/trpc';
-import { Room } from '../../../server/models/Room';
 import { useNavigate, useParams } from '@tanstack/react-router';
+import { ChangeEvent, useState } from 'react';
+import { Room } from '../../../server/models/Room';
+import { trpc } from '../../utils/trpc';
+import { useRoomDisplays } from '../providers/roomDisplays.provider';
+import './Header.css';
 
 function HostHeader({ room }: { room: Room }) {
   const resetCardValuesMutation = trpc.rooms.reset.useMutation();
@@ -12,7 +12,7 @@ function HostHeader({ room }: { room: Room }) {
 
   function resetCardData() {
     // TODO: write simpler FN to reset room cards...
-    resetCardValuesMutation.mutate({ id: room.id });
+    resetCardValuesMutation.mutate({ roomId: room.id });
   }
 
   function handleLabelChange(event: ChangeEvent<HTMLInputElement>) {
@@ -24,10 +24,9 @@ function HostHeader({ room }: { room: Room }) {
     if (!label || !label.length) {
       // TODO: make component with "reset"
       console.error('invalid label');
-      return <p>An invalid label was provided</p>;
+    } else {
+      updateRoom.mutate({ ...room, label });
     }
-
-    updateRoom.mutate({ ...room, label });
   }
 
   function handleShowVotes() {
@@ -72,36 +71,17 @@ function HostHeader({ room }: { room: Room }) {
 
 function Header() {
   const navigate = useNavigate({});
-  const { roomId } = useParams({ from: '/room/$roomId' });
+  const { roomId, displayId } = useParams({ from: '/$roomId/$displayId' });
   const {
     data: room,
     isLoading,
     isError,
   } = trpc.rooms.byId.useQuery({ id: roomId });
   const { roomDisplays } = useRoomDisplays();
-  // const { state } = useLocation();
-  const [isHost, setIsHost] = useState(false);
-  const displaysData = roomDisplays.displays;
 
-  // useEffect(() => {
-  //   if (displaysData) {
-  //     const found = displaysData.find(
-  //       (display) => display.name === state.displayName
-  //     );
-
-  //     if (found) {
-  //       if (found.isHost) {
-  //         setIsHost(found.isHost);
-  //       }
-  //     }
-  //   }
-  // }, [displaysData, state.displayName]);
-
-  // if (!parsedRoomId || !state || (state && !state.displayName)) {
-  //   navigate('/noAuth');
-  //   // TODO: Correct this...
-  //   return <div>Routing to No Auth...</div>;
-  // }
+  const currentDisplay = roomDisplays.displays.find(
+    (display) => display.id === displayId
+  );
 
   // TODO: Move this to a common header...
   function signOut() {
@@ -122,8 +102,8 @@ function Header() {
 
   return (
     <div id='header-wrapper'>
-      {isHost && <HostHeader room={room} />}
-      {!isHost && (
+      {currentDisplay?.isHost && <HostHeader room={room} />}
+      {!currentDisplay?.isHost && (
         <>Room Label: {room && room.label ? room.label : 'No room label'}</>
       )}
       <button onClick={signOut}>Sign Out</button>

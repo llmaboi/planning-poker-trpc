@@ -67,23 +67,14 @@ function DisplayLogin() {
     createOrUpdateDisplayMutation.mutate(
       { roomId, cardValue: 0, isHost, name: displayName },
       {
-        onSuccess: () => {
-          // TODO: Do I need to set this data returned?
-
-          // TODO: change this to use ID not name.
-          navigate(
-            {
-              to: '/room/$roomId', // '/room/' + roomId,
-              params: {
-                roomId,
-              },
-            }
-            //  {
-            //   state: {
-            //     displayName,
-            //   },
-            // }
-          );
+        onSuccess: (data) => {
+          navigate({
+            to: '/$roomId/$displayId',
+            params: {
+              roomId,
+              displayId: data.id,
+            },
+          });
         },
       }
     );

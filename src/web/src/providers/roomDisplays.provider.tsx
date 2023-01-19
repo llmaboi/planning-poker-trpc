@@ -21,31 +21,51 @@ const RoomDisplaysContext = createContext<
 
 function RoomDisplaysProvider({ children }: { children: ReactNode }) {
   const { roomId } = useParams({ from: '/$roomId' });
-  const { data } = trpc.displays.listByRoom.useQuery({
-    id: roomId.toString(),
-  });
+  const { data, isLoading } = trpc.displays.listByRoom.useQuery(
+    {
+      id: roomId.toString(),
+    },
+    {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      retry: false,
+      staleTime: Infinity,
+    }
+  );
   const [displays, setDisplays] = useState<Display[]>([]);
 
-  // const [roomLabel, setRoomLabel] = useState<string | null>(null);
-
-  let unSubDisplays: WebSocket | undefined;
-
-  // TODO: how to do this close session properly?
-  // useEffect(() => {
-  //   return () => {
-  //     unSubDisplays && unSubDisplays.close();
-  //   };
-  // }, [unSubDisplays]);
-
   useEffect(() => {
-    if (roomId) {
+    if (roomId && !isLoading) {
       // Set displays once per room id...
-      data && setDisplays(data);
-      // const { websocket } = websocketRoomDisplays(roomId, setDisplays);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      // unSubDisplays = websocket;
+      if (data) {
+        data && setDisplays(data);
+      }
     }
-  }, [data, roomId]);
+  }, [roomId, isLoading]);
+
+  trpc.displays.socket.useSubscription(
+    { roomId },
+    {
+      onData: (display) => {
+        setDisplays((stateDisplays) => {
+          const updatedDisplays = [...stateDisplays];
+          const displayIndex = updatedDisplays.findIndex(
+            (originalDisplay) => originalDisplay.id === display.id
+          );
+
+          if (displayIndex === -1) {
+            // Add it to the array.
+            updatedDisplays.push(display);
+          } else {
+            updatedDisplays.splice(displayIndex, 1, display);
+          }
+
+          return updatedDisplays;
+        });
+      },
+    }
+  );
 
   // NOTE: you *might* need to memoize this value
   // Learn more in http://kcd.im/optimize-context

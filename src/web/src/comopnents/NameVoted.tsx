@@ -18,6 +18,7 @@ function NameVoted() {
           voted: cardValue,
         });
       });
+      setDisplayNameAndVoted(displayNameVoted);
     }
   });
 

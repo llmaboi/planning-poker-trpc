@@ -1,8 +1,13 @@
 import { MySQLPromisePool } from '@fastify/mysql';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { Room, PromiseData, RoomRaw, ZodRoomRaw, DisplayRaw } from '../models';
-
-import { getDisplaysForRoom } from './mysqlDisplays';
+import {
+  Room,
+  PromiseData,
+  RoomRaw,
+  ZodRoomRaw,
+  DisplayRaw,
+} from '../models/index.js';
+import { getDisplaysForRoom } from './mysqlDisplays.js';
 
 async function createRoom(
   connection: MySQLPromisePool,
@@ -85,7 +90,11 @@ async function updateRoomDisplayCards(
 
   const [result] = await connection.query<ResultSetHeader>(queryString);
 
-  if (result.warningStatus === 0 && result.serverStatus === 2) {
+  if (
+    result.warningStatus === 0
+    // Unsure about serverStatus...
+    // && result.serverStatus === 2
+  ) {
     return getDisplaysForRoom(connection, roomId);
   }
 

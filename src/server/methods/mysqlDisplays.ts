@@ -1,6 +1,6 @@
 import { MySQLPromisePool } from '@fastify/mysql';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { Display, PromiseData, DisplayRaw, ZodDisplayRaw } from '../models';
+import { Display, PromiseData, DisplayRaw, ZodDisplayRaw } from '../models/index.js';
 
 async function createDisplay(
   connection: MySQLPromisePool,

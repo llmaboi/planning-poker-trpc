@@ -1,26 +1,15 @@
 import fastifyMysql, { MySQLPromisePool } from '@fastify/mysql';
 import ws from '@fastify/websocket';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
-import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import fastify from 'fastify';
-import { appRouter } from './router';
-import { createContext } from './router/context';
-import { WebSocketServer } from 'ws';
+import { appRouter } from './router/index.js';
+import { createContext } from './router/context.js';
+import { ParsedEnv } from './config.js';
 
 declare module 'fastify' {
   interface FastifyInstance {
     mysql: MySQLPromisePool;
   }
-}
-
-export interface ServerOptions {
-  dev?: boolean;
-  port?: number;
-  prefix?: string;
-  mysqlName: string;
-  mysqlUser: string;
-  mysqlPassword: string;
-  mysqlPort: number;
 }
 
 const envToLogger = {
@@ -37,34 +26,24 @@ const envToLogger = {
   test: false,
 };
 
-export function createServer(opts: ServerOptions) {
-  const dev = opts.dev ?? true;
-  const port = opts.port ?? 3030;
-  const prefix = opts.prefix ?? '/trpc';
-  console.log('dev: ', dev);
+export function createServer(opts: ParsedEnv) {
+  const dev = opts.VITE_DEV;
+  const port = opts.VITE_API_PORT;
+  const prefix = opts.VITE_API_PREFIX;
   const logger = dev ? envToLogger['development'] : envToLogger['production'];
   const server = fastify({ logger });
 
-  console.log('register WS');
-  server.register(ws, {
-    prefix: '/trpc/socket',
-    // options: {
-    //   port: 3031,
-    // },
-  });
-  console.log('after register WS');
+  server.register(ws);
 
   server.register(fastifyMysql, {
-    // host: 'localhost',
-    database: opts.mysqlName,
-    user: opts.mysqlUser,
-    password: opts.mysqlPassword,
-    port: opts.mysqlPort,
+    database: opts.VITE_MYSQL_NAME,
+    user: opts.VITE_MYSQL_USER,
+    password: opts.VITE_MYSQL_PASSWORD,
+    port: opts.VITE_MYSQL_PORT,
     promise: true,
   });
 
   server.get('/', async () => {
-    console.log('wazzo', server.mysql);
     return { hello: 'wait-on 💨' };
   });
 
@@ -78,7 +57,6 @@ export function createServer(opts: ServerOptions) {
   const start = async () => {
     try {
       await server.listen({ port });
-      console.log('listening on port', port);
     } catch (err) {
       server.log.error(err);
       process.exit(1);

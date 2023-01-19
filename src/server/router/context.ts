@@ -4,24 +4,24 @@ import { NodeHTTPCreateContextFnOptions } from '@trpc/server/dist/adapters/node-
 import EventEmitter from 'events';
 import { IncomingMessage } from 'http';
 import ws from 'ws';
-import { createdServer } from '..';
+import { createdServer } from '../index.js';
 
-export interface User {
-  name: string | string[];
-}
+// TODO: maybe add an "auth ctx" for a room && display?
+// export interface User {
+//   name: string | string[];
+// }
+const emitter = new EventEmitter();
 
 export function createContext({
-  req,
-  res,
-}: CreateFastifyContextOptions &
-  NodeHTTPCreateContextFnOptions<IncomingMessage, ws>) {
-  const user: User = { name: req.headers['username'] ?? 'anonymous' };
-  const emitter = new EventEmitter();
+  ...opts
+}:
+  | CreateFastifyContextOptions
+  | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>) {
+  // const user: User = { name: req.headers['username'] ?? 'anonymous' };
 
   return {
-    req,
-    res,
-    user,
+    ...opts,
+    // user,
     mysql: createdServer.server.mysql,
     emitter,
   };

@@ -1,8 +1,4 @@
-import {
-  createReactRouter,
-  createRouteConfig,
-  Outlet,
-} from '@tanstack/react-router';
+import { createRouteConfig, Outlet, ReactRouter } from '@tanstack/react-router';
 import DisplayLogin from '../src/comopnents/DisplayLogin';
 import NoDisplay from '../src/comopnents/NoDisplay';
 import NoPathFound from '../src/comopnents/NoPathFound';
@@ -12,13 +8,16 @@ import AuthLayout from '../src/layouts/Auth.layout';
 
 // TODO: Actual main file, remove above later.
 const rootRoute = createRouteConfig({
-  // component: () => (
-  //   <>
-  //     <div>Welcome PLEASE STYLE / REMOVE</div>
-  //     <hr />
-  //     <Outlet />
-  //   </>
-  // ),
+  component: () => (
+    <>
+      <Outlet />
+    </>
+  ),
+});
+
+const noDisplayRoute = rootRoute.createRoute({
+  path: '/',
+  component: RoomLogin,
 });
 
 const displayConnectRoute = rootRoute.createRoute({
@@ -32,21 +31,20 @@ const displayConnectRoute = rootRoute.createRoute({
   },
 });
 
-const noDisplayRoute = rootRoute.createRoute({
-  path: '/',
-  // component: Index,
-  component: RoomLogin,
-});
-// .addChildren([displayConnectRoute]);
-
 const roomRoute = rootRoute.createRoute({
-  path: '/room/$roomId',
+  path: '/$roomId/$displayId',
   component: Room,
   parseParams: (params) => {
-    return { roomId: parseInt(params.roomId) };
+    return {
+      roomId: parseInt(params.roomId),
+      displayId: parseInt(params.displayId),
+    };
   },
-  stringifyParams: ({ roomId }) => {
-    return { roomId: roomId.toString() };
+  stringifyParams: ({ roomId, displayId }) => {
+    return {
+      roomId: roomId.toString(),
+      displayId: displayId.toString(),
+    };
   },
 });
 
@@ -77,4 +75,6 @@ const routeConfig = rootRoute.addChildren([
   catchAll,
 ]);
 
-export const router = createReactRouter({ routeConfig });
+export const router = new ReactRouter({
+  routeConfig,
+});

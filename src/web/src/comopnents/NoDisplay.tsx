@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 
 function NoDisplay() {
-  const navigate = useNavigate({ from: 'noDisplay' });
+  const navigate = useNavigate({ from: '/noDisplay' });
 
   function returnHome() {
     navigate({ to: '/' });
