@@ -2,10 +2,7 @@ import { MySQLPromisePool } from '@fastify/mysql';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { Display, PromiseData, DisplayRaw, ZodDisplayRaw } from '../models/index.js';
 
-async function createDisplay(
-  connection: MySQLPromisePool,
-  displayData: Omit<Display, 'id'>
-): PromiseData<DisplayRaw> {
+async function createDisplay(connection: MySQLPromisePool, displayData: Omit<Display, 'id'>): PromiseData<DisplayRaw> {
   let queryString = 'INSERT INTO Displays (name';
   queryString += ', room_id';
   queryString += ') ';
@@ -27,10 +24,7 @@ async function createDisplay(
  * Get single display information.
  * @param id - display ID
  */
-async function getDisplay(
-  connection: MySQLPromisePool,
-  id: string
-): PromiseData<DisplayRaw> {
+async function getDisplay(connection: MySQLPromisePool, id: string): PromiseData<DisplayRaw> {
   let queryString = 'SELECT * FROM Displays WHERE ID = "';
   queryString += id + '";';
 
@@ -48,14 +42,10 @@ async function getDisplay(
  * Get single display information.
  * @param name - display name
  */
-async function getDisplayByName(
-  connection: MySQLPromisePool,
-  name: string,
-  roomId: number
-): PromiseData<DisplayRaw> {
+async function getDisplayByName(connection: MySQLPromisePool, name: string, roomId: number): PromiseData<DisplayRaw> {
   let queryString = 'SELECT * FROM Displays WHERE NAME = "';
   queryString += name + '" ';
-  queryString += ' AND room_id = ' + roomId + ';';
+  queryString += ` AND room_id = ${roomId};`;
 
   const [rows] = await connection.query<RowDataPacket[]>(queryString);
   if (Array.isArray(rows) && rows.length === 1) {
@@ -71,10 +61,7 @@ async function getDisplayByName(
  * Get all displays for a given room.
  * @param id - room ID
  */
-async function getDisplaysForRoom(
-  connection: MySQLPromisePool,
-  id: string
-): PromiseData<DisplayRaw[]> {
+async function getDisplaysForRoom(connection: MySQLPromisePool, id: string): PromiseData<DisplayRaw[]> {
   let queryString = 'SELECT * FROM Displays WHERE room_id = ';
   queryString += id + '';
 
@@ -84,10 +71,7 @@ async function getDisplaysForRoom(
   return { data };
 }
 
-async function updateDisplay(
-  connection: MySQLPromisePool,
-  displayData: Display
-): PromiseData<DisplayRaw> {
+async function updateDisplay(connection: MySQLPromisePool, displayData: Display): PromiseData<DisplayRaw> {
   let queryString = 'UPDATE Displays ';
   queryString += `SET name = "${displayData.name}", `;
   queryString += 'room_id = ' + displayData.roomId.toString() + ', ';
@@ -104,10 +88,4 @@ async function updateDisplay(
   throw new Error('There was an error updating your display');
 }
 
-export {
-  createDisplay,
-  getDisplay,
-  getDisplayByName,
-  getDisplaysForRoom,
-  updateDisplay,
-};
+export { createDisplay, getDisplay, getDisplayByName, getDisplaysForRoom, updateDisplay };

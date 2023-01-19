@@ -8,7 +8,7 @@ function AuthLayout() {
   return (
     <RoomDisplaysProvider>
       <Header />
-      <section className='auth-body'>
+      <section className="auth-body">
         <Outlet />
       </section>
     </RoomDisplaysProvider>

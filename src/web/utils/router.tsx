@@ -67,13 +67,7 @@ const catchAll = rootRoute.createRoute({
   component: NoPathFound,
 });
 
-const routeConfig = rootRoute.addChildren([
-  authRoute,
-  noDisplayRoute,
-  displayConnectRoute,
-  invalidDisplay,
-  catchAll,
-]);
+const routeConfig = rootRoute.addChildren([authRoute, noDisplayRoute, displayConnectRoute, invalidDisplay, catchAll]);
 
 export const router = new ReactRouter({
   routeConfig,

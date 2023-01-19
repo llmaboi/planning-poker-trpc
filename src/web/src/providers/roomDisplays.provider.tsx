@@ -1,12 +1,6 @@
 // import { websocketRoomDisplays } from '../api/mysqlFastify';
 import { useParams } from '@tanstack/react-router';
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Display } from '../../../server/models/Display';
 import { trpc } from '../../utils/trpc';
 
@@ -15,9 +9,7 @@ interface RoomDisplays {
   displays: Display[];
 }
 
-const RoomDisplaysContext = createContext<
-  { roomDisplays: RoomDisplays } | undefined
->(undefined);
+const RoomDisplaysContext = createContext<{ roomDisplays: RoomDisplays } | undefined>(undefined);
 
 function RoomDisplaysProvider({ children }: { children: ReactNode }) {
   const { roomId } = useParams({ from: '/$roomId' });
@@ -50,9 +42,7 @@ function RoomDisplaysProvider({ children }: { children: ReactNode }) {
       onData: (display) => {
         setDisplays((stateDisplays) => {
           const updatedDisplays = [...stateDisplays];
-          const displayIndex = updatedDisplays.findIndex(
-            (originalDisplay) => originalDisplay.id === display.id
-          );
+          const displayIndex = updatedDisplays.findIndex((originalDisplay) => originalDisplay.id === display.id);
 
           if (displayIndex === -1) {
             // Add it to the array.
@@ -73,19 +63,13 @@ function RoomDisplaysProvider({ children }: { children: ReactNode }) {
     roomDisplays: { displays: displays },
   };
 
-  return (
-    <RoomDisplaysContext.Provider value={value}>
-      {children}
-    </RoomDisplaysContext.Provider>
-  );
+  return <RoomDisplaysContext.Provider value={value}>{children}</RoomDisplaysContext.Provider>;
 }
 
 function useRoomDisplays() {
   const context = useContext(RoomDisplaysContext);
   if (context === undefined) {
-    throw new Error(
-      'useRoomDisplays must be used within a RoomDisplaysProvider'
-    );
+    throw new Error('useRoomDisplays must be used within a RoomDisplaysProvider');
   }
   return context;
 }

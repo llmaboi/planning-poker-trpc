@@ -14,9 +14,7 @@ const emitter = new EventEmitter();
 
 export function createContext({
   ...opts
-}:
-  | CreateFastifyContextOptions
-  | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>) {
+}: CreateFastifyContextOptions | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>) {
   // const user: User = { name: req.headers['username'] ?? 'anonymous' };
 
   return {

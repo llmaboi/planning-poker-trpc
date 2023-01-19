@@ -17,9 +17,7 @@ export default function Room() {
   const { roomDisplays } = useRoomDisplays();
   const displayMutation = trpc.displays.update.useMutation();
 
-  const display = roomDisplays.displays.find(
-    (displayItem) => displayItem.id === displayId
-  );
+  const display = roomDisplays.displays.find((displayItem) => displayItem.id === displayId);
 
   function updateDisplayCardValue(number: number) {
     if (display)
@@ -41,14 +39,12 @@ export default function Room() {
 
   return (
     <>
-      <div className='cards-wrapper'>
+      <div className="cards-wrapper">
         {cards.map((number) => {
           return (
             <Card
               key={number}
-              buttonDisabled={
-                typeof selectedNumber === 'number' && selectedNumber > 0
-              }
+              buttonDisabled={typeof selectedNumber === 'number' && selectedNumber > 0}
               number={number}
               onCardClick={updateDisplayCardValue}
               selectedNumber={selectedNumber}
@@ -61,7 +57,7 @@ export default function Room() {
 
       {roomDisplays && <PieData />}
 
-      <div className='reset-selection'>
+      <div className="reset-selection">
         <button onClick={resetSelection}>Reset Selection</button>
       </div>
     </>

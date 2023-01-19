@@ -46,11 +46,7 @@ export const displaysRouter = trpcRouter({
     .input(ZodDisplay.omit({ id: true }))
     .mutation(async function ({ input, ctx }): Promise<Display> {
       try {
-        const { data } = await getDisplayByName(
-          ctx.mysql,
-          input.name,
-          input.roomId
-        );
+        const { data } = await getDisplayByName(ctx.mysql, input.name, input.roomId);
 
         const display = transformDisplay(data);
         // If it matches return it
@@ -91,11 +87,7 @@ export const displaysRouter = trpcRouter({
       })
     )
     .query(async function ({ input, ctx }): Promise<Display> {
-      const { data } = await getDisplayByName(
-        ctx.mysql,
-        input.name,
-        input.roomId
-      );
+      const { data } = await getDisplayByName(ctx.mysql, input.name, input.roomId);
 
       return transformDisplay(data);
     }),
@@ -121,43 +113,39 @@ export const displaysRouter = trpcRouter({
 
       return data.map(transformDisplay);
     }),
-  update: publicProcedure
-    .input(ZodDisplay)
-    .mutation(async function ({ ctx, input }): Promise<Display> {
-      const { data } = await updateDisplay(ctx.mysql, {
-        cardValue: input.cardValue,
-        id: input.id,
-        isHost: input.isHost,
-        name: input.name,
-        roomId: input.roomId,
-      });
+  update: publicProcedure.input(ZodDisplay).mutation(async function ({ ctx, input }): Promise<Display> {
+    const { data } = await updateDisplay(ctx.mysql, {
+      cardValue: input.cardValue,
+      id: input.id,
+      isHost: input.isHost,
+      name: input.name,
+      roomId: input.roomId,
+    });
 
-      const display = transformDisplay(data);
+    const display = transformDisplay(data);
 
-      ctx.emitter.emit(SocketKeys.display, [display]);
+    ctx.emitter.emit(SocketKeys.display, [display]);
 
-      return display;
-    }),
+    return display;
+  }),
 
-  socket: publicProcedure
-    .input(z.object({ roomId: z.number() }))
-    .subscription(({ ctx, input }) => {
-      return observable<Display>((emit) => {
-        function onDisplayUpdate(data: Display[]) {
-          data.forEach((display) => {
-            if (display.roomId === input.roomId) {
-              emit.next(display);
-            }
-          });
-        }
+  socket: publicProcedure.input(z.object({ roomId: z.number() })).subscription(({ ctx, input }) => {
+    return observable<Display>((emit) => {
+      function onDisplayUpdate(data: Display[]) {
+        data.forEach((display) => {
+          if (display.roomId === input.roomId) {
+            emit.next(display);
+          }
+        });
+      }
 
-        ctx.emitter.on(SocketKeys.display, onDisplayUpdate);
+      ctx.emitter.on(SocketKeys.display, onDisplayUpdate);
 
-        return () => {
-          ctx.emitter.off(SocketKeys.display, onDisplayUpdate);
-        };
-      });
-    }),
+      return () => {
+        ctx.emitter.off(SocketKeys.display, onDisplayUpdate);
+      };
+    });
+  }),
 
   bump: publicProcedure.input(ZodDisplay).mutation(({ ctx, input }) => {
     ctx.emitter.emit(SocketKeys.display, [input]);

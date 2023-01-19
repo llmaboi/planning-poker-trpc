@@ -34,20 +34,13 @@ function DisplayLogin() {
   const [isHost, setIsHost] = useState(false);
   const [displayNameError, setDisplayNameError] = useState(false);
   const { roomId } = useParams({ from: '/$roomId' });
-  const createOrUpdateDisplayMutation =
-    trpc.displays.createOrUpdate.useMutation();
-  const {
-    data: room,
-    isLoading,
-    isError,
-  } = trpc.rooms.byId.useQuery({ id: roomId });
+  const createOrUpdateDisplayMutation = trpc.displays.createOrUpdate.useMutation();
+  const { data: room, isLoading, isError } = trpc.rooms.byId.useQuery({ id: roomId });
   const navigate = useNavigate({ from: '/$roomId' });
 
   const displayNameExists = displayName && displayName.length > 0;
 
-  function handleDisplayChange(
-    event: ChangeEvent<HTMLInputElement> | undefined
-  ) {
+  function handleDisplayChange(event: ChangeEvent<HTMLInputElement> | undefined) {
     if (event && event.target.value) {
       setDisplayName(event.target.value);
     }
@@ -68,7 +61,7 @@ function DisplayLogin() {
       { roomId, cardValue: 0, isHost, name: displayName },
       {
         onSuccess: (data) => {
-          navigate({
+          void navigate({
             to: '/$roomId/$displayId',
             params: {
               roomId,
@@ -82,27 +75,17 @@ function DisplayLogin() {
 
   return (
     <>
-      <form
-        onSubmit={handleFindOrCreateDisplay}
-        style={{ display: 'flex', flexDirection: 'column' }}
-      >
+      <form onSubmit={handleFindOrCreateDisplay} style={{ display: 'flex', flexDirection: 'column' }}>
         <label>
           Display Name:
-          <input
-            required
-            type='text'
-            value={displayName}
-            onChange={handleDisplayChange}
-          />
+          <input required type="text" value={displayName} onChange={handleDisplayChange} />
         </label>
-        {displayNameError && (
-          <span style={{ color: 'red' }}>Display Name is required</span>
-        )}
+        {displayNameError && <span style={{ color: 'red' }}>Display Name is required</span>}
         <label>
           Room Host:
-          <input type='checkbox' checked={isHost} onChange={handleHost} />
+          <input type="checkbox" checked={isHost} onChange={handleHost} />
         </label>
-        <button disabled={!displayNameExists} type='submit'>
+        <button disabled={!displayNameExists} type="submit">
           Join room
         </button>
 

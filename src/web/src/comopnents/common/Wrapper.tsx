@@ -1,11 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  createWSClient,
-  httpBatchLink,
-  splitLink,
-  TRPCWebSocketClient,
-  wsLink,
-} from '@trpc/client';
+import { createWSClient, httpBatchLink, splitLink, TRPCWebSocketClient, wsLink } from '@trpc/client';
 import { ReactNode, useState } from 'react';
 import superjson from 'superjson';
 import { trpc } from '../../../utils/trpc';
