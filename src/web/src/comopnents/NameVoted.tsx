@@ -4,9 +4,7 @@ import './NameVoted.css';
 
 function NameVoted() {
   const { roomDisplays } = useRoomDisplays();
-  const [displayNameAndVoted, setDisplayNameAndVoted] = useState<
-    { name: string; voted: number }[]
-  >([]);
+  const [displayNameAndVoted, setDisplayNameAndVoted] = useState<{ name: string; voted: number }[]>([]);
   const displays = roomDisplays.displays;
 
   useEffect(() => {
@@ -20,17 +18,17 @@ function NameVoted() {
       });
       setDisplayNameAndVoted(displayNameVoted);
     }
-  });
+  }, [displays]);
 
   const nameVoted = displayNameAndVoted.filter(({ voted }) => voted);
 
   return (
-    <section className='name-voted-wrapper'>
+    <section className="name-voted-wrapper">
       <h3>Room voting results:</h3>
       <h5>
         {nameVoted.length} of {displayNameAndVoted.length} voted
       </h5>
-      <div className='voted-wrapper'>
+      <div className="voted-wrapper">
         {displayNameAndVoted.length === 0 && <div>No data to display</div>}
         {displayNameAndVoted.length > 0 &&
           displayNameAndVoted.map(({ name, voted }, index) => {

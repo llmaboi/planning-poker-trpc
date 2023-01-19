@@ -36,24 +36,15 @@ function HostHeader({ room }: { room: Room }) {
 
   return (
     <>
-      <label id='room-label'>
-        Room Label:{' '}
-        <input
-          disabled={updateRoom.isLoading}
-          type='text'
-          value={label}
-          onChange={handleLabelChange}
-        />
+      <label id="room-label">
+        Room Label: <input disabled={updateRoom.isLoading} type="text" value={label} onChange={handleLabelChange} />
       </label>
 
       <button disabled={updateRoom.isLoading} onClick={updateLabel}>
         Update label
       </button>
 
-      <button
-        disabled={resetCardValuesMutation.isLoading}
-        onClick={resetCardData}
-      >
+      <button disabled={resetCardValuesMutation.isLoading} onClick={resetCardData}>
         Reset card data
       </button>
       {room.showVotes ? (
@@ -72,21 +63,15 @@ function HostHeader({ room }: { room: Room }) {
 function Header() {
   const navigate = useNavigate({});
   const { roomId, displayId } = useParams({ from: '/$roomId/$displayId' });
-  const {
-    data: room,
-    isLoading,
-    isError,
-  } = trpc.rooms.byId.useQuery({ id: roomId });
+  const { data: room, isLoading, isError } = trpc.rooms.byId.useQuery({ id: roomId });
   const { roomDisplays } = useRoomDisplays();
 
-  const currentDisplay = roomDisplays.displays.find(
-    (display) => display.id === displayId
-  );
+  const currentDisplay = roomDisplays.displays.find((display) => display.id === displayId);
 
   // TODO: Move this to a common header...
   function signOut() {
     // TODO: Does state need to be reset?
-    navigate({ to: '/noDisplay' });
+    void navigate({ to: '/noDisplay' });
     // TODO: Correct this...
     return <div>Routing to No Auth...</div>;
   }
@@ -101,11 +86,9 @@ function Header() {
   }
 
   return (
-    <div id='header-wrapper'>
+    <div id="header-wrapper">
       {currentDisplay?.isHost && <HostHeader room={room} />}
-      {!currentDisplay?.isHost && (
-        <>Room Label: {room && room.label ? room.label : 'No room label'}</>
-      )}
+      {!currentDisplay?.isHost && <>Room Label: {room && room.label ? room.label : 'No room label'}</>}
       <button onClick={signOut}>Sign Out</button>
     </div>
   );

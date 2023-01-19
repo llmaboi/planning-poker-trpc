@@ -3,6 +3,6 @@ import { createServer } from './server.js';
 
 const server = createServer(serverConfig);
 
-server.start();
+void server.start();
 
 export const createdServer = server;

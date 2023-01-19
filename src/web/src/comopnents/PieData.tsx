@@ -2,17 +2,7 @@ import { PieChart } from 'react-minimal-pie-chart';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import './PieData.css';
 
-const cardColors = [
-  '#8D5A97',
-  '#907F9F',
-  '#A4A5AE',
-  '#B0C7BD',
-  '#B8EBD0',
-  '#14342B',
-  '#60935D',
-  '#BAB700',
-  '#BBDFC5',
-];
+const cardColors = ['#8D5A97', '#907F9F', '#A4A5AE', '#B0C7BD', '#B8EBD0', '#14342B', '#60935D', '#BAB700', '#BBDFC5'];
 
 function PieData() {
   const { roomDisplays } = useRoomDisplays();
@@ -54,13 +44,11 @@ function PieData() {
   }
 
   return (
-    <section className='pie-wrapper'>
+    <section className="pie-wrapper">
       {pieData.length > 0 && (
         <PieChart
           data={pieData}
-          label={({ dataEntry }) =>
-            `${dataEntry.title} | ${Math.round(dataEntry.percentage) + '%'}`
-          }
+          label={({ dataEntry }) => `${dataEntry.title} | ${Math.round(dataEntry.percentage)}%`}
           labelStyle={(index) => ({
             fill: cardColors[index],
             fontSize: '5px',

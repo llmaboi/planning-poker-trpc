@@ -8,10 +8,5 @@
     "isolatedModules": false,
     "noEmit": false
   },
-  "include": [
-    "src/server",
-    "tsconfig.json",
-    "tsconfig.server.json",
-    "tsconfig.node.json"
-  ]
+  "include": ["src/server", "tsconfig.json", "tsconfig.server.json", "tsconfig.node.json"]
 }

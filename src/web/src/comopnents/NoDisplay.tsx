@@ -4,7 +4,7 @@ function NoDisplay() {
   const navigate = useNavigate({ from: '/noDisplay' });
 
   function returnHome() {
-    navigate({ to: '/' });
+    void navigate({ to: '/' });
   }
 
   return (

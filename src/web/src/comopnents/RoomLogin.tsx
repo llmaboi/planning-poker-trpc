@@ -3,13 +3,7 @@ import './RoomLogin.css';
 import { useNavigate } from '@tanstack/react-router';
 import { trpc } from '../../utils/trpc';
 
-function RoomList({
-  onSelectRoom,
-  roomSearch,
-}: {
-  onSelectRoom: (roomId: number) => void;
-  roomSearch: string;
-}) {
+function RoomList({ onSelectRoom, roomSearch }: { onSelectRoom: (roomId: number) => void; roomSearch: string }) {
   const { data: rooms, isLoading, isError } = trpc.rooms.list.useQuery();
 
   if (isLoading) {
@@ -49,9 +43,7 @@ function RoomLogin() {
 
   const roomNameExists = roomName.length > 0;
 
-  function handleRoomNameChange(
-    event: ChangeEvent<HTMLInputElement> | undefined
-  ) {
+  function handleRoomNameChange(event: ChangeEvent<HTMLInputElement> | undefined) {
     if (event && event.target.value) {
       setRoomName(event.target.value);
     } else {
@@ -71,7 +63,7 @@ function RoomLogin() {
       { name: roomName, label: '', showVotes: true },
       {
         onSuccess: ({ id }) => {
-          navigate({
+          void navigate({
             to: '/$roomId',
             params: { roomId: id },
             //             state: {
@@ -85,7 +77,7 @@ function RoomLogin() {
   }
 
   function handleRoomSelection(roomId: number) {
-    navigate({
+    void navigate({
       to: '/$roomId',
       params: { roomId },
       //  {
@@ -101,23 +93,12 @@ function RoomLogin() {
   return (
     <>
       <h2>Search for or select your room</h2>
-      <form
-        onSubmit={handleCreateRoom}
-        style={{ display: 'flex', flexDirection: 'column' }}
-      >
+      <form onSubmit={handleCreateRoom} style={{ display: 'flex', flexDirection: 'column' }}>
         <label>
-          Create New Room:{' '}
-          <input
-            required
-            type='text'
-            value={roomName}
-            onChange={handleRoomNameChange}
-          />
+          Create New Room: <input required type="text" value={roomName} onChange={handleRoomNameChange} />
         </label>
-        {roomNameError && (
-          <span style={{ color: 'red' }}>Room Name is required</span>
-        )}
-        <button disabled={!roomNameExists} type='submit'>
+        {roomNameError && <span style={{ color: 'red' }}>Room Name is required</span>}
+        <button disabled={!roomNameExists} type="submit">
           Create room
         </button>
       </form>

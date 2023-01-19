@@ -33,9 +33,9 @@ export function createServer(opts: ParsedEnv) {
   const logger = dev ? envToLogger['development'] : envToLogger['production'];
   const server = fastify({ logger });
 
-  server.register(ws);
+  void server.register(ws);
 
-  server.register(fastifyMysql, {
+  void server.register(fastifyMysql, {
     database: opts.VITE_MYSQL_NAME,
     user: opts.VITE_MYSQL_USER,
     password: opts.VITE_MYSQL_PASSWORD,
@@ -44,10 +44,10 @@ export function createServer(opts: ParsedEnv) {
   });
 
   server.get('/', async () => {
-    return { hello: 'wait-on 💨' };
+    return Promise.resolve({ hello: 'wait-on 💨' });
   });
 
-  server.register(fastifyTRPCPlugin, {
+  void server.register(fastifyTRPCPlugin, {
     prefix,
     useWSS: true,
     trpcOptions: { router: appRouter, createContext },

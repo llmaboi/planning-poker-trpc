@@ -4,7 +4,7 @@ function NoPathFound() {
   const navigate = useNavigate({ from: '/*' });
 
   function returnHome() {
-    navigate({ to: '/' });
+    void navigate({ to: '/' });
   }
 
   return (

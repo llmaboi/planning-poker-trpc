@@ -1,18 +1,9 @@
 import { MySQLPromisePool } from '@fastify/mysql';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import {
-  Room,
-  PromiseData,
-  RoomRaw,
-  ZodRoomRaw,
-  DisplayRaw,
-} from '../models/index.js';
+import { Room, PromiseData, RoomRaw, ZodRoomRaw, DisplayRaw } from '../models/index.js';
 import { getDisplaysForRoom } from './mysqlDisplays.js';
 
-async function createRoom(
-  connection: MySQLPromisePool,
-  roomData: Omit<Room, 'id'>
-): PromiseData<RoomRaw> {
+async function createRoom(connection: MySQLPromisePool, roomData: Omit<Room, 'id'>): PromiseData<RoomRaw> {
   let queryString = 'INSERT INTO Rooms (name';
   if (roomData.label) {
     queryString += ', label';
@@ -34,10 +25,7 @@ async function createRoom(
   throw new Error('There was an error creating your room');
 }
 
-async function getRoom(
-  connection: MySQLPromisePool,
-  id: string
-): PromiseData<RoomRaw> {
+async function getRoom(connection: MySQLPromisePool, id: string): PromiseData<RoomRaw> {
   let queryString = 'SELECT * FROM Rooms WHERE ID = "';
   queryString += id + '"';
 
@@ -60,10 +48,7 @@ async function getRooms(connection: MySQLPromisePool): PromiseData<RoomRaw[]> {
   return { data };
 }
 
-async function updateRoom(
-  connection: MySQLPromisePool,
-  roomData: Room
-): PromiseData<RoomRaw> {
+async function updateRoom(connection: MySQLPromisePool, roomData: Room): PromiseData<RoomRaw> {
   let queryString = 'UPDATE Rooms ';
   queryString += `SET name = "${roomData.name}"`;
   if (roomData.label) {
@@ -80,10 +65,7 @@ async function updateRoom(
   throw new Error('There was an error updating your room');
 }
 
-async function updateRoomDisplayCards(
-  connection: MySQLPromisePool,
-  roomId: string
-): PromiseData<DisplayRaw[]> {
+async function updateRoomDisplayCards(connection: MySQLPromisePool, roomId: string): PromiseData<DisplayRaw[]> {
   let queryString = 'UPDATE Displays ';
   queryString += 'SET card_value = 0';
   queryString += ' WHERE room_id = ' + roomId + ';';
