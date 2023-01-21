@@ -11,6 +11,7 @@ const parsedEnvRaw = z.object({
 
   VITE_API_PORT: z.string(),
   VITE_API_PREFIX: z.string(),
+  VITE_API_HOST: z.string(),
   VITE_DEV: z.string().optional().nullable().default('false'),
 });
 
@@ -25,12 +26,14 @@ const parsedEnv = z.object({
 
   VITE_API_PORT: z.number(),
   VITE_API_PREFIX: z.string(),
+  VITE_API_HOST: z.string(),
   VITE_DEV: z.boolean(),
 });
 
 const parsedProdEnvRaw = z.object({
   VITE_API_PREFIX: z.string(),
   VITE_API_PORT: z.string(),
+  VITE_API_HOST: z.string(),
 
   VITE_MYSQL_HOST: z.string(),
   VITE_MYSQL_NAME: z.string(),
@@ -41,6 +44,7 @@ const parsedProdEnvRaw = z.object({
 const parsedProdEnv = z.object({
   VITE_API_PREFIX: z.string(),
   VITE_API_PORT: z.number(),
+  VITE_API_HOST: z.string(),
 
   VITE_MYSQL_HOST: z.string(),
   VITE_MYSQL_NAME: z.string(),

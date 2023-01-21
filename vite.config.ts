@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
   const fullApiUrl = `http://${baseUrl}:${apiPort}`;
 
   const appPort = parseInt(process.env.VITE_APP_PORT);
+  console.log('appPort: ', appPort);
 
   return {
     root: path.join(__dirname, 'src/web'),
@@ -26,6 +27,7 @@ export default defineConfig(({ mode }) => {
         },
       },
       port: appPort,
+      host: '0.0.0.0',
     },
     resolve: {
       alias: {
