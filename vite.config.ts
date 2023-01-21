@@ -4,7 +4,7 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+  process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
 
   const baseUrl = process.env.VITE_BASE_URL;
   const apiPort = process.env.VITE_API_PORT;

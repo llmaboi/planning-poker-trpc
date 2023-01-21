@@ -34,7 +34,7 @@ function RoomDisplaysProvider({ children }: { children: ReactNode }) {
         data && setDisplays(data);
       }
     }
-  }, [roomId, isLoading]);
+  }, [roomId, isLoading, data]);
 
   trpc.displays.socket.useSubscription(
     { roomId },
