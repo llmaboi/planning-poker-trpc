@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
-import { FastifyInstance } from 'fastify';
+import { FastifyBaseLogger, FastifyInstance, FastifyTypeProviderDefault } from 'fastify';
+import { Http2Server, Http2ServerRequest, Http2ServerResponse } from 'http2';
 import { getDevServerConfig, getProdServerConfig } from './config.js';
 import { createDevServer, createProdServer } from './server.js';
 
@@ -12,7 +13,11 @@ dotenv.config({
   path: dotEnvPath,
 });
 
-let server: { server: FastifyInstance; start: () => Promise<void>; stop: () => Promise<void> };
+type MyServer =
+  | FastifyInstance<Http2Server, Http2ServerRequest, Http2ServerResponse, FastifyBaseLogger, FastifyTypeProviderDefault>
+  | FastifyInstance;
+
+let server: { server: MyServer; start: () => Promise<void>; stop: () => Promise<void> };
 
 if (dev) {
   const config = getDevServerConfig();

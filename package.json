@@ -15,7 +15,7 @@
     "dev2:wss": "wait-port 3030 && tsx watch src/server/wsServer.ts",
     "dev:client": "wait-port 3030 && vite",
     "build:client": "VITE_APP_PORT=4173 vite build",
-    "build:server": "tsc --project tsconfig.server.json",
+    "build:server": "tsc --project tsconfig.server.json && cp ./server.key ./dist/src/server && cp ./server.crt ./dist/src/server",
     "build": "run-s build:*",
     "preview": "vite preview",
     "start:server": "node dist/src/server/index.js",

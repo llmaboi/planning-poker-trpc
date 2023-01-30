@@ -2,6 +2,7 @@ import fastifyMysql, { MySQLPromisePool } from '@fastify/mysql';
 import ws from '@fastify/websocket';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import fastify from 'fastify';
+import { readFileSync } from 'fs';
 import { ParsedEnv, ParsedProdEnv } from './config.js';
 import { createContext } from './router/context.js';
 import { appRouter } from './router/index.js';
@@ -36,9 +37,19 @@ export function createProdServer({
   VITE_API_HOST,
 }: ParsedProdEnv) {
   const logger = envToLogger['production'];
-  const server = fastify({ logger });
+  const server = fastify({
+    logger,
+    https: {
+      key: readFileSync('./server.key', 'utf8'),
+      cert: readFileSync('./server.crt', 'utf8'),
+      allowHTTP1: true,
+    },
+    http2: true,
+  });
 
-  void server.register(ws);
+  void server.register(ws, {
+    options: {},
+  });
 
   void server.register(fastifyMysql, {
     ssl: {
@@ -76,12 +87,19 @@ export function createProdServer({
 }
 
 export function createDevServer(opts: ParsedEnv) {
-  const dev = opts.VITE_DEV;
   const port = opts.VITE_API_PORT;
   const host = opts.VITE_API_HOST;
   const prefix = opts.VITE_API_PREFIX;
-  const logger = dev ? envToLogger['development'] : envToLogger['production'];
-  const server = fastify({ logger });
+  const logger = envToLogger['development'];
+  const server = fastify({
+    logger,
+    https: {
+      key: readFileSync('./server.key', 'utf8'),
+      cert: readFileSync('./server.crt', 'utf8'),
+      allowHTTP1: true,
+    },
+    http2: true,
+  });
 
   void server.register(ws);
 

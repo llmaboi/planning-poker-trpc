@@ -8,7 +8,7 @@ let websocket: TRPCWebSocketClient;
 
 function connectWebsocket(urlEnd: string) {
   if (!websocket) {
-    websocket = createWSClient({ url: `ws://${urlEnd}` });
+    websocket = createWSClient({ url: `wss://${urlEnd}` });
   }
 
   return { wsClient: websocket };
@@ -17,7 +17,7 @@ function connectWebsocket(urlEnd: string) {
 export function Wrapper({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = import.meta.env.VITE_API_HOST;
   const apiPort = import.meta.env.VITE_API_PORT;
   const apiPrefix = import.meta.env.VITE_API_PREFIX;
 
@@ -25,7 +25,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
   const { wsClient } = connectWebsocket(socketUrl);
 
   const appPort = import.meta.env.VITE_APP_PORT;
-  const apiUrl = `http://${baseUrl}:${appPort}${apiPrefix}`;
+  const apiUrl = `https://${baseUrl}:${appPort}${apiPrefix}`;
 
   const [trpcClient] = useState(() =>
     trpc.createClient({
