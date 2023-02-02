@@ -6,11 +6,11 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
 
-  const baseUrl = process.env.VITE_API_HOST;
-  const apiPort = process.env.VITE_API_PORT;
-  const fullApiUrl = `https://${baseUrl}:${apiPort}`;
+  // const baseUrl = process.env.VITE_API_HOST;
+  // const apiPort = process.env.VITE_API_PORT;
+  // const fullApiUrl = `https://${baseUrl}:${apiPort}`;
 
-  const appPort = parseInt(process.env.VITE_APP_PORT);
+  // const appPort = parseInt(process.env.VITE_APP_PORT);
 
   return {
     root: path.join(__dirname, 'src/web'),

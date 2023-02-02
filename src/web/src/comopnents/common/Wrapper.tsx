@@ -26,7 +26,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
   const { wsClient } = connectWebsocket(socketUrl);
 
   const appPort = import.meta.env.VITE_APP_PORT;
-  const apiUrl = `http://${baseUrl}`; //:${appPort}${apiPrefix}`;
+  const apiUrl = `https://${baseUrl}`; //:${appPort}${apiPrefix}`;
   // const apiUrl = `https://${baseUrl}:${appPort}${apiPrefix}`;
 
   const [trpcClient] = useState(() =>
