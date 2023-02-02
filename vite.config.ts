@@ -20,11 +20,11 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
     },
     server: {
-      proxy: {
-        '/trpc': {
-          target: fullApiUrl,
-        },
-      },
+      // proxy: {
+      //   '/trpc': {
+      //     target: fullApiUrl,
+      //   },
+      // },
       // port: appPort,
       // host: process.env.VITE_BASE_URL,
     },
