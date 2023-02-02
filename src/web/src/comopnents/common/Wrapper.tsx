@@ -17,7 +17,7 @@ function connectWebsocket(urlEnd: string) {
 export function Wrapper({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = import.meta.env.VITE_API_HOST;
   const apiPort = import.meta.env.VITE_API_PORT;
   const apiPrefix = import.meta.env.VITE_API_PREFIX;
 

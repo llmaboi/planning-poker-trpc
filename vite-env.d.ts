@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_MYSQL_PASSWORD: string;
   readonly VITE_MYSQL_PORT: number;
 
+  readonly VITE_API_HOST: number;
   readonly VITE_API_PORT: number;
   readonly VITE_API_PREFIX: string;
 

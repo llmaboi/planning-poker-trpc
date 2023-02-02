@@ -6,7 +6,7 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
 
-  const baseUrl = process.env.VITE_BASE_URL;
+  const baseUrl = process.env.VITE_API_HOST;
   const apiPort = process.env.VITE_API_PORT;
   const fullApiUrl = `http://${baseUrl}:${apiPort}`;
 
@@ -26,6 +26,7 @@ export default defineConfig(({ mode }) => {
         },
       },
       port: appPort,
+      host: process.env.VITE_BASE_URL,
     },
     resolve: {
       alias: {
