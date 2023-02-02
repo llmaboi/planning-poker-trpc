@@ -21,11 +21,12 @@ export function Wrapper({ children }: { children: ReactNode }) {
   const apiPort = import.meta.env.VITE_API_PORT;
   const apiPrefix = import.meta.env.VITE_API_PREFIX;
 
-  const socketUrl = `${baseUrl}:${apiPort}${apiPrefix}`;
+  const socketUrl = `${baseUrl}${apiPrefix}`;
+  // const socketUrl = `${baseUrl}:${apiPort}${apiPrefix}`;
   const { wsClient } = connectWebsocket(socketUrl);
 
   const appPort = import.meta.env.VITE_APP_PORT;
-  const apiUrl = `https://${baseUrl}`; //:${appPort}${apiPrefix}`;
+  const apiUrl = `http://${baseUrl}`; //:${appPort}${apiPrefix}`;
   // const apiUrl = `https://${baseUrl}:${appPort}${apiPrefix}`;
 
   const [trpcClient] = useState(() =>
