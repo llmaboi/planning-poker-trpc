@@ -19,7 +19,7 @@
     "build": "run-s build:*",
     "preview": "vite preview",
     "start:server": "node dist/src/server/index.js",
-    "start:client": "wait-port 3030 && VITE_APP_PORT=4173 vite preview",
+    "start:client": "wait-port 0.0.0.0:10000 && VITE_APP_PORT=4173 vite preview",
     "start": "run-p start:* --print-label",
     "test-dev": "start-server-and-test 'tsx src/server' http-get://localhost:3030 'tsx src/web'",
     "test-start": "start-server-and-test 'node dist/server' http-get://localhost:3030 'node dist/client'",
