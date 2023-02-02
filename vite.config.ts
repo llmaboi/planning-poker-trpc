@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
 
   const baseUrl = process.env.VITE_API_HOST;
   const apiPort = process.env.VITE_API_PORT;
-  const fullApiUrl = `http://${baseUrl}:${apiPort}`;
+  const fullApiUrl = `https://${baseUrl}:${apiPort}`;
 
   const appPort = parseInt(process.env.VITE_APP_PORT);
 
