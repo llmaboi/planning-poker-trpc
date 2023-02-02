@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   // const apiPort = process.env.VITE_API_PORT;
   // const fullApiUrl = `https://${baseUrl}:${apiPort}`;
 
-  const appPort = parseInt(process.env.VITE_APP_PORT);
+  // const appPort = parseInt(process.env.VITE_APP_PORT);
 
   return {
     root: path.join(__dirname, 'src/web'),
@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
           target: process.env.VITE_API_HOST,
         },
       },
-      port: appPort,
+      // port: appPort,
       // host: process.env.VITE_BASE_URL,
     },
     resolve: {
