@@ -8,7 +8,7 @@ let websocket: TRPCWebSocketClient;
 
 function connectWebsocket(urlEnd: string) {
   if (!websocket) {
-    websocket = createWSClient({ url: `ws://${urlEnd}` });
+    websocket = createWSClient({ url: `wss://${urlEnd}` });
   }
 
   return { wsClient: websocket };
