@@ -25,8 +25,8 @@ export default defineConfig(({ mode }) => {
           target: fullApiUrl,
         },
       },
-      port: appPort,
-      host: process.env.VITE_BASE_URL,
+      // port: appPort,
+      // host: process.env.VITE_BASE_URL,
     },
     resolve: {
       alias: {
