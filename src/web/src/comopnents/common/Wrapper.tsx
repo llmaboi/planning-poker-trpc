@@ -17,16 +17,17 @@ function connectWebsocket(urlEnd: string) {
 export function Wrapper({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
-  const baseUrl = import.meta.env.VITE_API_HOST;
-  const apiPort = import.meta.env.VITE_API_PORT;
+  // const baseUrl = import.meta.env.VITE_API_HOST;
+  // const apiPort = import.meta.env.VITE_API_PORT;
   const apiPrefix = import.meta.env.VITE_API_PREFIX;
+  const apiUrl = import.meta.env.VITE_API_URL + apiPrefix;
 
-  const socketUrl = `${baseUrl}${apiPrefix}`;
+  // const socketUrl = `${baseUrl}${apiPrefix}`;
   // const socketUrl = `${baseUrl}:${apiPort}${apiPrefix}`;
-  const { wsClient } = connectWebsocket(socketUrl);
+  const { wsClient } = connectWebsocket(apiUrl);
 
-  const appPort = import.meta.env.VITE_APP_PORT;
-  const apiUrl = `https://${baseUrl}${apiPrefix}`; //:${appPort}${apiPrefix}`;
+  // const appPort = import.meta.env.VITE_APP_PORT;
+  // const apiUrl = `https://${baseUrl}${apiPrefix}`; //:${appPort}${apiPrefix}`;
   // const apiUrl = `https://${baseUrl}:${appPort}${apiPrefix}`;
 
   const [trpcClient] = useState(() =>
