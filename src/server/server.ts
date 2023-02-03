@@ -32,8 +32,8 @@ export function createProdServer({
   VITE_MYSQL_PASSWORD,
   VITE_MYSQL_USER,
   VITE_API_PREFIX,
-  VITE_API_URL,
-}: ParsedProdEnv) {
+}: // VITE_API_URL,
+ParsedProdEnv) {
   const logger = envToLogger['production'];
   const server = fastify({ logger });
 
