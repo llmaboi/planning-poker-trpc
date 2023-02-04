@@ -31,7 +31,7 @@ export function createProdServer({
   VITE_MYSQL_NAME,
   VITE_MYSQL_PASSWORD,
   VITE_MYSQL_USER,
-  VITE_API_URL,
+  // VITE_API_URL,
   VITE_API_PREFIX,
 }: ParsedProdEnv) {
   const logger = envToLogger['production'];
