@@ -63,7 +63,7 @@ export function createProdServer({
   const stop = () => server.close();
   const start = async () => {
     try {
-      await server.listen({ host: VITE_API_URL, port: 0 });
+      await server.listen({ host: VITE_API_URL, port: 443 });
       // await server.listen();
     } catch (err) {
       server.log.error(err);

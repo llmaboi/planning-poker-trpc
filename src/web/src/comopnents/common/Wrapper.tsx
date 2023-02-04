@@ -20,7 +20,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
   // const baseUrl = import.meta.env.VITE_API_HOST;
   // const apiPort = import.meta.env.VITE_API_PORT;
   const apiPrefix = import.meta.env.VITE_API_PREFIX;
-  const apiUrl = import.meta.env.VITE_API_URL + apiPrefix;
+  const apiUrl = import.meta.env.VITE_API_URL + ':433' + apiPrefix;
 
   // const socketUrl = `${baseUrl}${apiPrefix}`;
   // const socketUrl = `${baseUrl}:${apiPort}${apiPrefix}`;
