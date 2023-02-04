@@ -31,7 +31,7 @@ export function createProdServer({
   VITE_MYSQL_NAME,
   VITE_MYSQL_PASSWORD,
   VITE_MYSQL_USER,
-  // VITE_API_URL,
+  VITE_API_URL,
   VITE_API_PREFIX,
 }: ParsedProdEnv) {
   const logger = envToLogger['production'];
@@ -63,8 +63,9 @@ export function createProdServer({
   const stop = () => server.close();
   const start = async () => {
     try {
-      // await server.listen({ host: VITE_API_URL });
-      await server.listen();
+      await server.listen({ host: VITE_API_URL, port: 3030 });
+      // await server.listen();
+      console.log('started');
     } catch (err) {
       server.log.error(err);
       process.exit(1);
@@ -105,7 +106,6 @@ export function createDevServer(opts: ParsedEnv) {
   const start = async () => {
     try {
       await server.listen({ host: apiUrl });
-      console.log('started');
     } catch (err) {
       server.log.error(err);
       process.exit(1);
