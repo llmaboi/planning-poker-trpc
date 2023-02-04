@@ -19,16 +19,16 @@ export default defineConfig(({ mode }) => {
       outDir: '../../dist/client',
       emptyOutDir: true,
     },
-    server: {
-      proxy: {
-        '/trpc': {
-          // target: fullApiUrl,
-          target: process.env.VITE_API_URL,
-        },
-      },
-      // port: appPort,
-      // host: process.env.VITE_BASE_URL,
-    },
+    // server: {
+    //   proxy: {
+    //     '/trpc': {
+    //       // target: fullApiUrl,
+    //       target: process.env.VITE_API_URL,
+    //     },
+    //   },
+    //   // port: appPort,
+    //   // host: process.env.VITE_BASE_URL,
+    // },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),

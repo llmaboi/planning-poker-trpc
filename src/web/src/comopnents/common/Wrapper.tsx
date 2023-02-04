@@ -21,7 +21,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
   // const apiPort = import.meta.env.VITE_API_PORT;
   const apiPrefix = import.meta.env.VITE_API_PREFIX;
   // const apiUrl = import.meta.env.VITE_API_URL + apiPrefix;
-  const apiUrl = 'planning-poker-m6dt.onrender.com' + apiPrefix;
+  const apiUrl = 'https://planning-poker-nh35.onrender.com' + apiPrefix;
 
   // const socketUrl = `${baseUrl}${apiPrefix}`;
   // const socketUrl = `${baseUrl}:${apiPort}${apiPrefix}`;
@@ -41,7 +41,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
           },
           true: wsLink({ client: wsClient }),
           false: httpBatchLink({
-            url: 'https://' + apiUrl,
+            url: apiUrl,
             // optional
             // headers() {
             //   return {
