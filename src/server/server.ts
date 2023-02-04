@@ -1,4 +1,5 @@
 import fastifyMysql, { MySQLPromisePool } from '@fastify/mysql';
+import cors from '@fastify/cors';
 import ws from '@fastify/websocket';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import fastify from 'fastify';
@@ -36,6 +37,9 @@ export function createProdServer({
 }: ParsedProdEnv) {
   const logger = envToLogger['production'];
   const server = fastify({ logger });
+  void server.register(cors, {
+    origin: 'https://planning-poker-m6dt.onrender.com',
+  });
 
   void server.register(ws);
 
