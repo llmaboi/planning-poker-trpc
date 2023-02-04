@@ -105,6 +105,7 @@ export function createDevServer(opts: ParsedEnv) {
   const start = async () => {
     try {
       await server.listen({ host: apiUrl });
+      console.log('started');
     } catch (err) {
       server.log.error(err);
       process.exit(1);
