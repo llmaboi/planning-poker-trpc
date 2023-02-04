@@ -41,7 +41,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
           },
           true: wsLink({ client: wsClient }),
           false: httpBatchLink({
-            url: apiUrl,
+            url: 'https://' + apiUrl,
             // optional
             // headers() {
             //   return {
