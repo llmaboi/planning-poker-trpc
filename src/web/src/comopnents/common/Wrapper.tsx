@@ -7,7 +7,7 @@ import { trpc } from '../../../utils/trpc';
 let websocket: TRPCWebSocketClient;
 
 function connectWebsocket(urlBase: string) {
-  const combinedUrl = import.meta.env.DEV ? `ws://${urlBase}/trpc` : `wss://${urlBase}`;
+  const combinedUrl = import.meta.env.DEV ? `ws://localhost:3030/trpc` : `wss://${urlBase}`;
   if (!websocket) {
     websocket = createWSClient({ url: combinedUrl });
   }
@@ -26,7 +26,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
     apiUrl = 'localhost:5173/trpc';
   }
 
-  const { wsClient } = connectWebsocket(import.meta.env.VITE_API_URL);
+  const { wsClient } = connectWebsocket(apiUrl);
   const combinedUrl = import.meta.env.DEV ? `http://${apiUrl}` : `https://${apiUrl}`;
 
   const [trpcClient] = useState(() =>
