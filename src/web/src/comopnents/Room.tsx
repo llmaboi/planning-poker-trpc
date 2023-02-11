@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router';
+import { roomRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import Card from './Card';
@@ -13,7 +14,7 @@ interface Card {
 }
 
 export default function Room() {
-  const { displayId } = useParams({ from: '/$roomId/$displayId' });
+  const { displayId } = useParams({ from: roomRoute.id });
   const { roomDisplays } = useRoomDisplays();
   const displayMutation = trpc.displays.update.useMutation();
 

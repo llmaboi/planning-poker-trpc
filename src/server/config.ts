@@ -9,6 +9,7 @@ const parsedEnvRaw = z.object({
   VITE_MYSQL_PASSWORD: z.string(),
   VITE_MYSQL_PORT: z.string(),
 
+  VITE_CLIENT_URL: z.string(),
   VITE_API_URL: z.string(),
   VITE_API_PREFIX: z.string(),
   VITE_DEV: z.string().optional().nullable().default('false'),
@@ -20,6 +21,7 @@ const parsedEnv = z.object({
   VITE_MYSQL_PASSWORD: z.string(),
   VITE_MYSQL_PORT: z.number(),
 
+  VITE_CLIENT_URL: z.string(),
   VITE_API_URL: z.string(),
   VITE_API_PREFIX: z.string(),
   VITE_DEV: z.boolean(),
@@ -29,6 +31,7 @@ const parsedProdEnvRaw = z.object({
   VITE_API_PREFIX: z.string(),
   VITE_API_URL: z.string(),
 
+  VITE_CLIENT_URL: z.string(),
   VITE_MYSQL_HOST: z.string(),
   VITE_MYSQL_NAME: z.string(),
   VITE_MYSQL_USER: z.string(),
@@ -39,6 +42,7 @@ const parsedProdEnv = z.object({
   VITE_API_PREFIX: z.string(),
   VITE_API_URL: z.string(),
 
+  VITE_CLIENT_URL: z.string(),
   VITE_MYSQL_HOST: z.string(),
   VITE_MYSQL_NAME: z.string(),
   VITE_MYSQL_USER: z.string(),

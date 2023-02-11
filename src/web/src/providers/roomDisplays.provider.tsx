@@ -2,6 +2,7 @@
 import { useParams } from '@tanstack/react-router';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Display } from '../../../server/models/Display';
+import { displayLoginRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 
 interface RoomDisplays {
@@ -12,7 +13,7 @@ interface RoomDisplays {
 const RoomDisplaysContext = createContext<{ roomDisplays: RoomDisplays } | undefined>(undefined);
 
 function RoomDisplaysProvider({ children }: { children: ReactNode }) {
-  const { roomId } = useParams({ from: '/$roomId' });
+  const { roomId } = useParams({ from: displayLoginRoute.id });
   const { data, isLoading } = trpc.displays.listByRoom.useQuery(
     {
       id: roomId.toString(),

@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { ChangeEvent, useState } from 'react';
 import { Room } from '../../../server/models/Room';
+import { roomRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import './Header.css';
@@ -62,7 +63,7 @@ function HostHeader({ room }: { room: Room }) {
 
 function Header() {
   const navigate = useNavigate({});
-  const { roomId, displayId } = useParams({ from: '/$roomId/$displayId' });
+  const { roomId, displayId } = useParams({ from: roomRoute.fullPath });
   const { data: room, isLoading, isError } = trpc.rooms.byId.useQuery({ id: roomId });
   const { roomDisplays } = useRoomDisplays();
 

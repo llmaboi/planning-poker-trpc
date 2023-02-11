@@ -6,9 +6,10 @@ import { trpc } from '../../../utils/trpc';
 
 let websocket: TRPCWebSocketClient;
 
-function connectWebsocket(urlEnd: string) {
+function connectWebsocket(urlBase: string) {
+  const combinedUrl = import.meta.env.DEV ? `ws://${urlBase}/trpc` : `wss://${urlBase}`;
   if (!websocket) {
-    websocket = createWSClient({ url: `wss://${urlEnd}` });
+    websocket = createWSClient({ url: combinedUrl });
   }
 
   return { wsClient: websocket };
@@ -17,19 +18,16 @@ function connectWebsocket(urlEnd: string) {
 export function Wrapper({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
-  // const baseUrl = import.meta.env.VITE_API_HOST;
-  // const apiPort = import.meta.env.VITE_API_PORT;
   const apiPrefix = import.meta.env.VITE_API_PREFIX;
-  // const apiUrl = import.meta.env.VITE_API_URL + apiPrefix;
-  const apiUrl = 'planning-poker-api-n0pe.onrender.com' + apiPrefix;
 
-  // const socketUrl = `${baseUrl}${apiPrefix}`;
-  // const socketUrl = `${baseUrl}:${apiPort}${apiPrefix}`;
-  const { wsClient } = connectWebsocket(apiUrl);
+  // If Dev use VITE Url & port...
+  let apiUrl = import.meta.env.VITE_API_URL + apiPrefix;
+  if (import.meta.env.DEV) {
+    apiUrl = 'localhost:5173/trpc';
+  }
 
-  // const appPort = import.meta.env.VITE_APP_PORT;
-  // const apiUrl = `https://${baseUrl}${apiPrefix}`; //:${appPort}${apiPrefix}`;
-  // const apiUrl = `https://${baseUrl}:${appPort}${apiPrefix}`;
+  const { wsClient } = connectWebsocket(import.meta.env.VITE_API_URL);
+  const combinedUrl = import.meta.env.DEV ? `http://${apiUrl}` : `https://${apiUrl}`;
 
   const [trpcClient] = useState(() =>
     trpc.createClient({
@@ -41,7 +39,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
           },
           true: wsLink({ client: wsClient }),
           false: httpBatchLink({
-            url: 'https://' + apiUrl,
+            url: combinedUrl,
             // optional
             // headers() {
             //   return {

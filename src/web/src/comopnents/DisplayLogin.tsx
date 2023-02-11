@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { displayLoginRoute, roomRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 
 function DisplayList({ roomId }: { roomId: number }) {
@@ -33,10 +34,11 @@ function DisplayLogin() {
   const [displayName, setDisplayName] = useState('');
   const [isHost, setIsHost] = useState(false);
   const [displayNameError, setDisplayNameError] = useState(false);
-  const { roomId } = useParams({ from: '/$roomId' });
+  // const { roomId } = useParams({ from: '/$roomId' });
+  const { roomId } = useParams({ from: displayLoginRoute.fullPath });
   const createOrUpdateDisplayMutation = trpc.displays.createOrUpdate.useMutation();
   const { data: room, isLoading, isError } = trpc.rooms.byId.useQuery({ id: roomId });
-  const navigate = useNavigate({ from: '/$roomId' });
+  const navigate = useNavigate({ from: displayLoginRoute.id });
 
   const displayNameExists = displayName && displayName.length > 0;
 
@@ -57,12 +59,14 @@ function DisplayLogin() {
       return;
     }
 
+    console.log('mutate for room route');
     createOrUpdateDisplayMutation.mutate(
       { roomId, cardValue: 0, isHost, name: displayName },
       {
         onSuccess: (data) => {
+          console.log('route to room');
           void navigate({
-            to: '/$roomId/$displayId',
+            to: roomRoute.fullPath,
             params: {
               roomId,
               displayId: data.id,

@@ -1,7 +1,8 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
-import './RoomLogin.css';
 import { useNavigate } from '@tanstack/react-router';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { displayLoginRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
+import './RoomLogin.css';
 
 function RoomList({ onSelectRoom, roomSearch }: { onSelectRoom: (roomId: number) => void; roomSearch: string }) {
   const { data: rooms, isLoading, isError } = trpc.rooms.list.useQuery();
@@ -64,12 +65,8 @@ function RoomLogin() {
       {
         onSuccess: ({ id }) => {
           void navigate({
-            to: '/$roomId',
+            to: displayLoginRoute.fullPath,
             params: { roomId: id },
-            //             state: {
-            //               displayName,
-            //             },
-            //           });
           });
         },
       }
@@ -78,13 +75,8 @@ function RoomLogin() {
 
   function handleRoomSelection(roomId: number) {
     void navigate({
-      to: '/$roomId',
+      to: displayLoginRoute.fullPath,
       params: { roomId },
-      //  {
-      //             state: {
-      //               displayName,
-      //             },
-      //           });
     });
   }
 

@@ -34,11 +34,12 @@ export function createProdServer({
   VITE_MYSQL_USER,
   VITE_API_URL,
   VITE_API_PREFIX,
+  VITE_CLIENT_URL,
 }: ParsedProdEnv) {
   const logger = envToLogger['production'];
   const server = fastify({ logger });
   void server.register(cors, {
-    origin: 'https://planning-poker-m6dt.onrender.com',
+    origin: VITE_CLIENT_URL, // 'https://planning-poker-m6dt.onrender.com',
   });
 
   void server.register(ws);
@@ -69,7 +70,6 @@ export function createProdServer({
     try {
       await server.listen({ host: VITE_API_URL, port: 3030 });
       // await server.listen();
-      console.log('started');
     } catch (err) {
       server.log.error(err);
       process.exit(1);
@@ -83,6 +83,9 @@ export function createDevServer(opts: ParsedEnv) {
   const dev = opts.VITE_DEV;
   const prefix = opts.VITE_API_PREFIX;
   const apiUrl = opts.VITE_API_URL; //.replace('.com', '');
+  const [apiBase, maybePort] = apiUrl.split(':');
+  const apiPort = maybePort ? parseInt(maybePort) : 3030;
+
   const logger = dev ? envToLogger['development'] : envToLogger['production'];
   const server = fastify({ logger });
 
@@ -109,7 +112,7 @@ export function createDevServer(opts: ParsedEnv) {
   const stop = () => server.close();
   const start = async () => {
     try {
-      await server.listen({ host: apiUrl });
+      await server.listen({ host: apiBase, port: apiPort });
     } catch (err) {
       server.log.error(err);
       process.exit(1);

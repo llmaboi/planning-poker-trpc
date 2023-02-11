@@ -6,11 +6,20 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
 
-  // const baseUrl = process.env.VITE_API_HOST;
-  // const apiPort = process.env.VITE_API_PORT;
-  // const fullApiUrl = `https://${baseUrl}:${apiPort}`;
+  const server =
+    mode === 'development'
+      ? {
+          proxy: {
+            '/trpc': {
+              target: 'http://' + process.env.VITE_API_URL,
+            },
+          },
+          // port: appPort,
+          // host: 'localhost',
+        }
+      : {};
 
-  // const appPort = parseInt(process.env.VITE_APP_PORT);
+  console.log(mode, server);
 
   return {
     root: path.join(__dirname, 'src/web'),
@@ -19,16 +28,7 @@ export default defineConfig(({ mode }) => {
       outDir: '../../dist/client',
       emptyOutDir: true,
     },
-    // server: {
-    //   proxy: {
-    //     '/trpc': {
-    //       // target: fullApiUrl,
-    //       target: process.env.VITE_API_URL,
-    //     },
-    //   },
-    //   // port: appPort,
-    //   // host: process.env.VITE_BASE_URL,
-    // },
+    server,
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
