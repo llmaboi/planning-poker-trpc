@@ -20,7 +20,7 @@ const envToLogger = {
   test: false,
 };
 
-export function createServer({ VITE_API_PREFIX, VITE_CLIENT_URL }: ParsedEnv) {
+export function createServer({ VITE_API_URL, VITE_API_PREFIX, VITE_CLIENT_URL }: ParsedEnv) {
   const currEnv = typeof process.env['NODE_ENV'] === 'string' ? process.env['NODE_ENV'] : 'production';
   const dev = currEnv === 'development';
   const logger = dev ? envToLogger['development'] : envToLogger['production'];
@@ -48,7 +48,7 @@ export function createServer({ VITE_API_PREFIX, VITE_CLIENT_URL }: ParsedEnv) {
   const start = async () => {
     try {
       await server.listen({
-        // host: VITE_API_URL,
+        host: VITE_API_URL,
         port: 3030,
       });
     } catch (err) {
