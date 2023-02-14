@@ -3,9 +3,9 @@ import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import './NameVoted.css';
 
 function NameVoted() {
-  const { roomDisplays } = useRoomDisplays();
+  const { roomDetails } = useRoomDisplays();
   const [displayNameAndVoted, setDisplayNameAndVoted] = useState<{ name: string; voted: number }[]>([]);
-  const displays = roomDisplays.displays;
+  const displays = roomDetails.displays;
 
   useEffect(() => {
     const displayNameVoted: { name: string; voted: number }[] = [];

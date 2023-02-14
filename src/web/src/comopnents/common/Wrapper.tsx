@@ -26,7 +26,7 @@ export function Wrapper({ children }: { children: ReactNode }) {
     apiUrl = 'localhost:5173/trpc';
   }
 
-  const { wsClient } = connectWebsocket(apiUrl);
+  const { wsClient } = connectWebsocket(import.meta.env.VITE_API_URL + apiPrefix);
   const combinedUrl = import.meta.env.DEV ? `http://${apiUrl}` : `https://${apiUrl}`;
 
   const [trpcClient] = useState(() =>

@@ -1,154 +1,186 @@
+import { TRPCError } from '@trpc/server';
 import { observable } from '@trpc/server/observable';
 import { z } from 'zod';
-import {
-  createDisplay,
-  getDisplay,
-  getDisplayByName,
-  getDisplaysForRoom,
-  updateDisplay,
-} from '../../methods/mysqlDisplays.js';
-import { Display, DisplayRaw, ZodDisplay } from '../../models/index.js';
+import { kebabStyle } from '../../methods/kebabStyle.js';
+import { Display, ZodDisplay } from '../../models/index.js';
+import { RoomMapItem } from '../context.js';
 import { publicProcedure, trpcRouter } from '../trpc.js';
 
-export function transformDisplay(rawDisplay: DisplayRaw): Display {
-  return {
-    cardValue: rawDisplay.card_value,
-    id: rawDisplay.id,
-    isHost: rawDisplay.is_host === 1,
-    name: rawDisplay.name,
-    roomId: rawDisplay.room_id,
-  };
-}
-
 export const SocketKeys = {
-  display: 'DISPLAY',
+  displays: 'DISPLAYS',
 } as const;
 
-// TODO: Should I format the data in non-snake case?
 export const displaysRouter = trpcRouter({
-  create: publicProcedure
-    .input(ZodDisplay.omit({ id: true }))
-    .mutation(async function ({ input, ctx }): Promise<Display> {
-      const { data } = await createDisplay(ctx.mysql, {
-        roomId: input.roomId,
-        name: input.name,
-        cardValue: input.cardValue,
-        isHost: input.isHost,
-      });
+  create: publicProcedure.input(ZodDisplay.omit({ id: true })).mutation(function ({ input, ctx }): Display {
+    const { roomsMap } = ctx;
 
-      const display = transformDisplay(data);
+    const room = roomsMap.get(input.roomId);
 
-      ctx.emitter.emit(SocketKeys.display, [display]);
+    if (room === undefined) throw new TRPCError({ code: 'NOT_FOUND' });
 
-      return display;
-    }),
-  createOrUpdate: publicProcedure
-    .input(ZodDisplay.omit({ id: true }))
-    .mutation(async function ({ input, ctx }): Promise<Display> {
-      try {
-        const { data } = await getDisplayByName(ctx.mysql, input.name, input.roomId);
+    const id = kebabStyle(input.name);
+    const newDisplay: Display = {
+      ...input,
+      id,
+    };
 
-        const display = transformDisplay(data);
-        // If it matches return it
-        if (
-          display.roomId === input.roomId &&
-          display.cardValue === input.cardValue &&
-          display.isHost === input.isHost
-        ) {
-          return display;
-        }
+    const alreadyExists = room.displays.get(id);
 
-        // otherwise update then return updated value
-        const { data: updatedDisplayRaw } = await updateDisplay(ctx.mysql, {
-          cardValue: input.cardValue,
-          id: display.id,
-          isHost: input.isHost,
-          name: input.name,
-          roomId: input.roomId,
-        });
+    if (alreadyExists !== undefined) throw new TRPCError({ code: 'CONFLICT', message: 'This value already exists' });
 
-        return transformDisplay(updatedDisplayRaw);
-      } catch (error) {
-        const { data } = await createDisplay(ctx.mysql, {
-          roomId: input.roomId,
-          name: input.name,
-          cardValue: input.cardValue,
-          isHost: input.isHost,
-        });
+    room.displays.set(id, newDisplay);
 
-        return transformDisplay(data);
-      }
-    }),
+    const socketKey = SocketKeys.displays + '-' + input.roomId;
+    ctx.emitter.emit(socketKey, room);
+
+    return newDisplay;
+  }),
+  createOrUpdate: publicProcedure.input(ZodDisplay.omit({ id: true })).mutation(function ({ input, ctx }): Display {
+    const { roomsMap } = ctx;
+
+    const room = roomsMap.get(input.roomId);
+
+    if (room === undefined)
+      throw new TRPCError({ code: 'NOT_FOUND', message: `Room not found with ID: ${input.roomId}` });
+
+    const id = kebabStyle(input.name);
+    const existingDisplay = room.displays.get(id);
+
+    if (existingDisplay === undefined) {
+      const newDisplay: Display = {
+        ...input,
+        id,
+      };
+
+      room.displays.set(id, newDisplay);
+
+      const socketKey = SocketKeys.displays + '-' + input.roomId;
+      ctx.emitter.emit(socketKey, room);
+
+      return newDisplay;
+    }
+
+    const updatedDisplay: Display = {
+      ...existingDisplay,
+      ...input,
+    };
+
+    room.displays.set(id, updatedDisplay);
+
+    const socketKey = SocketKeys.displays + '-' + input.roomId;
+    ctx.emitter.emit(socketKey, room);
+
+    return updatedDisplay;
+  }),
   byName: publicProcedure
     .input(
       z.object({
         name: z.string(),
-        roomId: z.number(),
+        roomId: z.string(),
       })
     )
-    .query(async function ({ input, ctx }): Promise<Display> {
-      const { data } = await getDisplayByName(ctx.mysql, input.name, input.roomId);
+    .query(function ({ input, ctx }): Display {
+      const { roomsMap } = ctx;
 
-      return transformDisplay(data);
+      const room = roomsMap.get(input.roomId);
+
+      if (room === undefined)
+        throw new TRPCError({ code: 'NOT_FOUND', message: `Room not found with ID: ${input.roomId}` });
+
+      const displays = Array.from(room.displays.values());
+
+      const display = displays.find((display) => display.name === input.name);
+
+      if (display === undefined)
+        throw new TRPCError({ code: 'NOT_FOUND', message: `Display not found with name: ${input.name}` });
+
+      return display;
     }),
   byId: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        roomId: z.string(),
+        id: z.string(),
       })
     )
-    .query(async function ({ input, ctx }): Promise<Display> {
-      const { data } = await getDisplay(ctx.mysql, input.id.toString());
+    .query(function ({ input, ctx }): Display {
+      const { roomsMap } = ctx;
 
-      return transformDisplay(data);
+      const room = roomsMap.get(input.roomId);
+
+      if (room === undefined)
+        throw new TRPCError({ code: 'NOT_FOUND', message: `Room not found with ID: ${input.roomId}` });
+
+      const display = room.displays.get(input.id);
+
+      if (display === undefined)
+        throw new TRPCError({ code: 'NOT_FOUND', message: `Display not found with ID: ${input.id}` });
+
+      return display;
     }),
   listByRoom: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        roomId: z.string(),
       })
     )
-    .query(async function ({ input, ctx }): Promise<Display[]> {
-      const { data } = await getDisplaysForRoom(ctx.mysql, input.id);
+    .query(function ({ input, ctx }): Display[] {
+      const { roomsMap } = ctx;
 
-      return data.map(transformDisplay);
+      const room = roomsMap.get(input.roomId);
+
+      if (room === undefined)
+        throw new TRPCError({ code: 'NOT_FOUND', message: `Room not found with ID: ${input.roomId}` });
+
+      // TODO: Verify ID of this?
+      const displays = Array.from(room.displays.values());
+
+      return displays;
     }),
-  update: publicProcedure.input(ZodDisplay).mutation(async function ({ ctx, input }): Promise<Display> {
-    const { data } = await updateDisplay(ctx.mysql, {
-      cardValue: input.cardValue,
-      id: input.id,
-      isHost: input.isHost,
-      name: input.name,
-      roomId: input.roomId,
-    });
+  update: publicProcedure.input(ZodDisplay).mutation(function ({ ctx, input }): Display {
+    const { roomsMap } = ctx;
 
-    const display = transformDisplay(data);
+    const room = roomsMap.get(input.roomId);
 
-    ctx.emitter.emit(SocketKeys.display, [display]);
+    if (room === undefined)
+      throw new TRPCError({ code: 'NOT_FOUND', message: `Room not found with ID: ${input.roomId}` });
 
-    return display;
+    // TODO: Verify ID of this?
+    const id = kebabStyle(input.name);
+    const display = room.displays.get(id);
+
+    if (display === undefined)
+      throw new TRPCError({ code: 'NOT_FOUND', message: `Display not found with name: ${input.name}` });
+
+    const updatedDisplay: Display = {
+      ...display,
+      ...input,
+    };
+
+    room.displays.set(id, updatedDisplay);
+
+    const socketKey = SocketKeys.displays + '-' + input.roomId;
+    ctx.emitter.emit(socketKey, room);
+
+    return updatedDisplay;
   }),
 
-  socket: publicProcedure.input(z.object({ roomId: z.number() })).subscription(({ ctx, input }) => {
-    return observable<Display>((emit) => {
-      function onDisplayUpdate(data: Display[]) {
-        data.forEach((display) => {
-          if (display.roomId === input.roomId) {
-            emit.next(display);
-          }
-        });
+  // TODO: work on this where you only subscribe to a room.
+  //  It must be a unique key of `display-${ROOM_ID}`
+  socket: publicProcedure.input(z.object({ roomId: z.string() })).subscription(({ ctx, input }) => {
+    return observable<RoomMapItem>((emit) => {
+      const socketKey = SocketKeys.displays + '-' + input.roomId;
+
+      function onDisplayUpdate(data: RoomMapItem) {
+        console.log('data: ', data);
+        emit.next(data);
       }
 
-      ctx.emitter.on(SocketKeys.display, onDisplayUpdate);
+      ctx.emitter.on(socketKey, onDisplayUpdate);
 
       return () => {
-        ctx.emitter.off(SocketKeys.display, onDisplayUpdate);
+        ctx.emitter.off(socketKey, onDisplayUpdate);
       };
     });
-  }),
-
-  bump: publicProcedure.input(ZodDisplay).mutation(({ ctx, input }) => {
-    ctx.emitter.emit(SocketKeys.display, [input]);
-    return input;
   }),
 });

@@ -1,7 +1,6 @@
 import * as dotenv from 'dotenv';
-import { FastifyInstance } from 'fastify';
-import { getDevServerConfig, getProdServerConfig } from './config.js';
-import { createDevServer, createProdServer } from './server.js';
+import { getServerConfig } from './config.js';
+import { createServer } from './server.js';
 
 const currEnv = typeof process.env['NODE_ENV'] === 'string' ? process.env['NODE_ENV'] : 'production';
 const dev = currEnv === 'development';
@@ -12,18 +11,8 @@ dotenv.config({
   path: dotEnvPath,
 });
 
-let server: { server: FastifyInstance; start: () => Promise<void>; stop: () => Promise<void> };
+const config = getServerConfig();
 
-if (dev) {
-  const config = getDevServerConfig();
-
-  server = createDevServer(config);
-} else {
-  const config = getProdServerConfig();
-
-  server = createProdServer(config);
-}
+const server = createServer(config);
 
 void server.start();
-
-export const createdServer = server;

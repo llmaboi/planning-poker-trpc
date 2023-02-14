@@ -5,9 +5,9 @@ import './PieData.css';
 const cardColors = ['#8D5A97', '#907F9F', '#A4A5AE', '#B0C7BD', '#B8EBD0', '#14342B', '#60935D', '#BAB700', '#BBDFC5'];
 
 function PieData() {
-  const { roomDisplays } = useRoomDisplays();
+  const { roomDetails } = useRoomDisplays();
   const numberMap = new Map<number, number>();
-  const displays = roomDisplays.displays;
+  const displays = roomDetails.displays;
 
   /**
    * 1. Get all cards to populate pie chard

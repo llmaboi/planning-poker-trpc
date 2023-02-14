@@ -19,8 +19,6 @@ export default defineConfig(({ mode }) => {
         }
       : {};
 
-  console.log(mode, server);
-
   return {
     root: path.join(__dirname, 'src/web'),
     publicDir: path.join(__dirname, 'src/web/public'),

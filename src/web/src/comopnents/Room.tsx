@@ -15,10 +15,10 @@ interface Card {
 
 export default function Room() {
   const { displayId } = useParams({ from: roomRoute.id });
-  const { roomDisplays } = useRoomDisplays();
+  const { roomDetails } = useRoomDisplays();
   const displayMutation = trpc.displays.update.useMutation();
 
-  const display = roomDisplays.displays.find((displayItem) => displayItem.id === displayId);
+  const display = roomDetails.displays.find((displayItem) => displayItem.id === displayId);
 
   function updateDisplayCardValue(number: number) {
     if (display)
@@ -54,9 +54,9 @@ export default function Room() {
         })}
       </div>
 
-      {roomDisplays && <NameVoted />}
-
-      {roomDisplays && <PieData />}
+      {/* TODO: Show voted... */}
+      {roomDetails.showVotes && roomDetails && <NameVoted />}
+      {roomDetails.showVotes && roomDetails && <PieData />}
 
       <div className="reset-selection">
         <button onClick={resetSelection}>Reset Selection</button>

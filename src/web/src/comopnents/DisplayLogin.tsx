@@ -2,14 +2,15 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { displayLoginRoute, roomRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
+import { useRoomDisplays } from '../providers/roomDisplays.provider';
 
-function DisplayList({ roomId }: { roomId: number }) {
+function DisplayList({ roomId }: { roomId: string }) {
   const {
     data: displays,
     isLoading,
     isError,
   } = trpc.displays.listByRoom.useQuery({
-    id: roomId.toString(),
+    roomId: roomId,
   });
 
   if (isLoading) {
@@ -29,16 +30,16 @@ function DisplayList({ roomId }: { roomId: number }) {
   );
 }
 
-// TODO: add to route with `roomId` as route param
 function DisplayLogin() {
   const [displayName, setDisplayName] = useState('');
   const [isHost, setIsHost] = useState(false);
   const [displayNameError, setDisplayNameError] = useState(false);
-  // const { roomId } = useParams({ from: '/$roomId' });
   const { roomId } = useParams({ from: displayLoginRoute.fullPath });
   const createOrUpdateDisplayMutation = trpc.displays.createOrUpdate.useMutation();
   const { data: room, isLoading, isError } = trpc.rooms.byId.useQuery({ id: roomId });
   const navigate = useNavigate({ from: displayLoginRoute.id });
+  // Start listening to the socket early so we can react to it.
+  useRoomDisplays();
 
   const displayNameExists = displayName && displayName.length > 0;
 
@@ -59,12 +60,10 @@ function DisplayLogin() {
       return;
     }
 
-    console.log('mutate for room route');
     createOrUpdateDisplayMutation.mutate(
       { roomId, cardValue: 0, isHost, name: displayName },
       {
         onSuccess: (data) => {
-          console.log('route to room');
           void navigate({
             to: roomRoute.fullPath,
             params: {

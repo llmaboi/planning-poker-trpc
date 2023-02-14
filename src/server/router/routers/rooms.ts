@@ -1,57 +1,82 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { createRoom, getRoom, getRooms, updateRoom, updateRoomDisplayCards } from '../../methods/mysqlRooms.js';
-import { Display, Room, RoomRaw, ZodRoom } from '../../models/index.js';
+import { kebabStyle } from '../../methods/kebabStyle.js';
+import { ZodRoom } from '../../models/index.js';
+import { RoomMapItem } from '../context.js';
 import { publicProcedure, trpcRouter } from '../trpc.js';
-import { SocketKeys, transformDisplay } from './displays.js';
-
-function transformRoom(roomRaw: RoomRaw): Room {
-  return {
-    id: roomRaw.id,
-    label: roomRaw.label,
-    name: roomRaw.name,
-    showVotes: roomRaw.show_votes === 1,
-  };
-}
+import { SocketKeys } from './displays.js';
 
 export const roomsRouter = trpcRouter({
-  create: publicProcedure.input(ZodRoom.omit({ id: true })).mutation(async function ({ input, ctx }): Promise<Room> {
-    const { data } = await createRoom(ctx.mysql, {
-      label: input.label,
-      name: input.name,
-      showVotes: input.showVotes,
+  create: publicProcedure.input(ZodRoom.omit({ id: true })).mutation(function ({ input, ctx }): RoomMapItem {
+    const { roomsMap } = ctx;
+
+    const id = kebabStyle(input.name);
+    const newDisplayMapItem = {
+      ...input,
+      id,
+      displays: new Map(),
+      label: input.label ?? '',
+    };
+
+    roomsMap.set(id, newDisplayMapItem);
+    // no socket should be listing to a room that was just created.
+
+    return newDisplayMapItem;
+  }),
+  byId: publicProcedure.input(z.object({ id: z.string() })).query(function ({ input, ctx }): RoomMapItem {
+    const { roomsMap } = ctx;
+    const data = roomsMap.get(input.id);
+
+    if (data === undefined) throw new TRPCError({ code: 'NOT_FOUND', message: `No room found with ID: ${input.id}` });
+
+    return data;
+  }),
+  list: publicProcedure.query(function ({ ctx }): RoomMapItem[] {
+    const { roomsMap } = ctx;
+
+    const rooms = Array.from(roomsMap.values());
+
+    return rooms;
+  }),
+  update: publicProcedure.input(ZodRoom).mutation(function ({ ctx, input }): RoomMapItem {
+    const { roomsMap } = ctx;
+
+    const room = roomsMap.get(input.id);
+
+    if (room === undefined) throw new TRPCError({ code: 'NOT_FOUND', message: `No room found with ID: ${input.id}` });
+
+    const id = kebabStyle(input.name);
+    const newRoom = {
+      ...room,
+      ...input,
+    };
+
+    roomsMap.set(id, newRoom);
+
+    const socketKey = SocketKeys.displays + '-' + id;
+    ctx.emitter.emit(socketKey, newRoom);
+
+    return newRoom;
+  }),
+  reset: publicProcedure.input(z.object({ id: z.string() })).mutation(function ({ ctx, input }): RoomMapItem {
+    const { roomsMap } = ctx;
+
+    const room = roomsMap.get(input.id);
+
+    if (room === undefined) throw new TRPCError({ code: 'NOT_FOUND', message: `No room found with ID: ${input.id}` });
+
+    const roomDisplays = Array.from(room.displays.values());
+
+    roomDisplays.forEach((roomDisplay) => {
+      room.displays.set(roomDisplay.id, {
+        ...roomDisplay,
+        cardValue: 0,
+      });
     });
 
-    return transformRoom(data);
+    const socketKey = SocketKeys.displays + '-' + input.id;
+    ctx.emitter.emit(socketKey, room);
+
+    return room;
   }),
-  byId: publicProcedure.input(z.object({ id: z.number() })).query(async function ({ input, ctx }): Promise<Room> {
-    const { data } = await getRoom(ctx.mysql, input.id.toString());
-
-    return transformRoom(data);
-  }),
-  list: publicProcedure.query(async function ({ ctx }): Promise<Room[]> {
-    const { data } = await getRooms(ctx.mysql);
-
-    return data.map(transformRoom);
-  }),
-  update: publicProcedure.input(ZodRoom).mutation(async function ({ ctx, input }): Promise<Room> {
-    const { data } = await updateRoom(ctx.mysql, {
-      id: input.id,
-      label: input.label,
-      name: input.name,
-      showVotes: input.showVotes,
-    });
-
-    return transformRoom(data);
-  }),
-  reset: publicProcedure
-    .input(z.object({ roomId: z.number() }))
-    .mutation(async function ({ ctx, input }): Promise<Display[]> {
-      const { data } = await updateRoomDisplayCards(ctx.mysql, input.roomId.toString());
-
-      const displays = data.map(transformDisplay);
-
-      ctx.emitter.emit(SocketKeys.display, displays);
-
-      return displays;
-    }),
 });

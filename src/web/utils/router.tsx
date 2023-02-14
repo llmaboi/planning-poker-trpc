@@ -5,6 +5,7 @@ import NoPathFound from '../src/comopnents/NoPathFound';
 import Room from '../src/comopnents/Room';
 import RoomLogin from '../src/comopnents/RoomLogin';
 import AuthLayout from '../src/layouts/Auth.layout';
+import { RoomDisplaysProvider } from '../src/providers/roomDisplays.provider';
 
 const rootRoute = new RootRoute({
   component: () => (
@@ -20,38 +21,55 @@ const noDisplayRoute = new Route({
   component: RoomLogin,
 });
 
-const verifiedLayoutRoute = new Route({
-  id: 'RoomLayout',
-  component: AuthLayout,
+const roomSubRoute = new Route({
+  id: 'RoomSubscription',
+  component: () => (
+    <RoomDisplaysProvider>
+      <Outlet />
+    </RoomDisplaysProvider>
+  ),
   getParentRoute: () => rootRoute,
 });
 
+const verifiedLayoutRoute = new Route({
+  id: 'RoomLayout',
+  // TODO: I'm not sure why I need to repeat this provider...
+  component: () => (
+    <RoomDisplaysProvider>
+      <AuthLayout />
+    </RoomDisplaysProvider>
+  ),
+  getParentRoute: () => roomSubRoute,
+});
+
 export const displayLoginRoute = new Route({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => roomSubRoute,
   path: 'room/$roomId',
   parseParams: (params) => {
-    return { roomId: parseInt(params.roomId) };
+    return { roomId: params.roomId };
   },
   stringifyParams: ({ roomId }) => {
-    return { roomId: roomId.toString() };
+    return { roomId: roomId };
   },
   component: DisplayLogin,
 });
 
+roomSubRoute.addChildren([displayLoginRoute, verifiedLayoutRoute]);
+
 export const roomRoute = new Route({
   getParentRoute: () => verifiedLayoutRoute,
   path: 'room/$roomId/$displayId',
-  component: () => <Room />,
+  component: Room,
   parseParams: (params) => {
     return {
-      roomId: parseInt(params.roomId),
-      displayId: parseInt(params.displayId),
+      roomId: params.roomId,
+      displayId: params.displayId,
     };
   },
   stringifyParams: ({ roomId, displayId }) => {
     return {
-      roomId: roomId.toString(),
-      displayId: displayId.toString(),
+      roomId: roomId,
+      displayId: displayId,
     };
   },
 });
@@ -72,13 +90,12 @@ const catchAll = new Route({
 
 const routeConfig = rootRoute.addChildren([
   noDisplayRoute,
-  displayLoginRoute,
-  verifiedLayoutRoute,
+  // displayLoginRoute,
+  roomSubRoute,
+  // verifiedLayoutRoute,
   invalidDisplay,
   catchAll,
 ]);
-
-console.log('routeConfig: ', routeConfig);
 
 export const router = new ReactRouter({
   routeTree: routeConfig,

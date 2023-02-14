@@ -11,9 +11,9 @@ function HostHeader({ room }: { room: Room }) {
   const updateRoom = trpc.rooms.update.useMutation();
   const [label, setLabel] = useState(room.label || '');
 
-  function resetCardData() {
+  function resetCards() {
     // TODO: write simpler FN to reset room cards...
-    resetCardValuesMutation.mutate({ roomId: room.id });
+    resetCardValuesMutation.mutate({ id: room.id });
   }
 
   function handleLabelChange(event: ChangeEvent<HTMLInputElement>) {
@@ -41,20 +41,21 @@ function HostHeader({ room }: { room: Room }) {
         Room Label: <input disabled={updateRoom.isLoading} type="text" value={label} onChange={handleLabelChange} />
       </label>
 
-      <button disabled={updateRoom.isLoading} onClick={updateLabel}>
+      <button disabled={updateRoom.isLoading || label.length <= 0} onClick={updateLabel}>
         Update label
       </button>
 
-      <button disabled={resetCardValuesMutation.isLoading} onClick={resetCardData}>
-        Reset card data
+      <button disabled={resetCardValuesMutation.isLoading} onClick={resetCards}>
+        Reset cards
       </button>
+
       {room.showVotes ? (
         <button disabled={updateRoom.isLoading} onClick={handleShowVotes}>
-          Hide Votes from users.
+          Hide Votes
         </button>
       ) : (
         <button disabled={updateRoom.isLoading} onClick={handleShowVotes}>
-          Show Votes to users.
+          Show Votes
         </button>
       )}
     </>
@@ -65,9 +66,9 @@ function Header() {
   const navigate = useNavigate({});
   const { roomId, displayId } = useParams({ from: roomRoute.fullPath });
   const { data: room, isLoading, isError } = trpc.rooms.byId.useQuery({ id: roomId });
-  const { roomDisplays } = useRoomDisplays();
+  const { roomDetails } = useRoomDisplays();
 
-  const currentDisplay = roomDisplays.displays.find((display) => display.id === displayId);
+  const currentDisplay = roomDetails.displays.find((display) => display.id === displayId);
 
   // TODO: Move this to a common header...
   function signOut() {

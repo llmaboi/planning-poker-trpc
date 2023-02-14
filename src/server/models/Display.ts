@@ -1,7 +1,10 @@
 import { z } from 'zod';
-import { ZodDisplay, ZodDisplayRaw } from './Display.zod.js';
+import { ZodDisplay } from './Display.zod.js';
 
-type DisplayRaw = z.infer<typeof ZodDisplayRaw>;
+/**
+ * @param id - name kebab-style
+ * @param roomId - kebab-style
+ */
 type Display = z.infer<typeof ZodDisplay>;
 
-export type { Display, DisplayRaw };
+export type { Display };

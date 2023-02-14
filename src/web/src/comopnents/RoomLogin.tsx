@@ -4,7 +4,7 @@ import { displayLoginRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 import './RoomLogin.css';
 
-function RoomList({ onSelectRoom, roomSearch }: { onSelectRoom: (roomId: number) => void; roomSearch: string }) {
+function RoomList({ onSelectRoom, roomSearch }: { onSelectRoom: (roomId: string) => void; roomSearch: string }) {
   const { data: rooms, isLoading, isError } = trpc.rooms.list.useQuery();
 
   if (isLoading) {
@@ -13,7 +13,7 @@ function RoomList({ onSelectRoom, roomSearch }: { onSelectRoom: (roomId: number)
     return <p>Something went wrong getting the rooms...</p>;
   }
 
-  function handleClick(roomId: number) {
+  function handleClick(roomId: string) {
     onSelectRoom(roomId);
   }
 
@@ -73,7 +73,7 @@ function RoomLogin() {
     );
   }
 
-  function handleRoomSelection(roomId: number) {
+  function handleRoomSelection(roomId: string) {
     void navigate({
       to: displayLoginRoute.fullPath,
       params: { roomId },

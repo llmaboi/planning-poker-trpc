@@ -1,5 +1,7 @@
 import { z } from 'zod';
-import { ZodRoom, ZodRoomRaw } from './Room.zod.js';
+import { ZodRoom } from './Room.zod.js';
 
-export type RoomRaw = z.infer<typeof ZodRoomRaw>;
+/**
+ * @param id - name kebab-style
+ */
 export type Room = z.infer<typeof ZodRoom>;

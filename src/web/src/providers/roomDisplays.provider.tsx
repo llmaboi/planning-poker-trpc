@@ -2,22 +2,22 @@
 import { useParams } from '@tanstack/react-router';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Display } from '../../../server/models/Display';
+import { RoomMapItem } from '../../../server/router/context';
 import { displayLoginRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 
-interface RoomDisplays {
-  // label: string | null;
+type RoomDetails = Omit<RoomMapItem, 'id' | 'displays'> & {
   displays: Display[];
-}
+};
 
-const RoomDisplaysContext = createContext<{ roomDisplays: RoomDisplays } | undefined>(undefined);
+type RoomDisplayCtx = { roomDetails: RoomDetails };
+
+const RoomDisplaysContext = createContext<RoomDisplayCtx | undefined>(undefined);
 
 function RoomDisplaysProvider({ children }: { children: ReactNode }) {
   const { roomId } = useParams({ from: displayLoginRoute.id });
-  const { data, isLoading } = trpc.displays.listByRoom.useQuery(
-    {
-      id: roomId.toString(),
-    },
+  const { data, isLoading } = trpc.rooms.byId.useQuery(
+    { id: roomId },
     {
       refetchOnWindowFocus: false,
       refetchOnMount: false,
@@ -26,13 +26,20 @@ function RoomDisplaysProvider({ children }: { children: ReactNode }) {
       staleTime: Infinity,
     }
   );
+  const [label, setLabel] = useState('');
+  const [name, setName] = useState('');
+  const [showVotes, setShowVotes] = useState(false);
+
   const [displays, setDisplays] = useState<Display[]>([]);
 
   useEffect(() => {
     if (roomId && !isLoading) {
       // Set displays once per room id...
       if (data) {
-        data && setDisplays(data);
+        setLabel(data.label ?? '');
+        setName(data.name);
+        setShowVotes(data.showVotes);
+        data && setDisplays(Array.from(data.displays.values()));
       }
     }
   }, [roomId, isLoading, data]);
@@ -40,28 +47,27 @@ function RoomDisplaysProvider({ children }: { children: ReactNode }) {
   trpc.displays.socket.useSubscription(
     { roomId },
     {
-      onData: (display) => {
-        setDisplays((stateDisplays) => {
-          const updatedDisplays = [...stateDisplays];
-          const displayIndex = updatedDisplays.findIndex((originalDisplay) => originalDisplay.id === display.id);
+      onData: (roomMapItem) => {
+        const displays = Array.from(roomMapItem.displays.values());
+        setLabel(roomMapItem.label ?? '');
+        setName(roomMapItem.name);
+        setShowVotes(roomMapItem.showVotes);
 
-          if (displayIndex === -1) {
-            // Add it to the array.
-            updatedDisplays.push(display);
-          } else {
-            updatedDisplays.splice(displayIndex, 1, display);
-          }
-
-          return updatedDisplays;
-        });
+        setDisplays(displays);
       },
+      onError: console.error,
     }
   );
 
   // NOTE: you *might* need to memoize this value
   // Learn more in http://kcd.im/optimize-context
-  const value: { roomDisplays: RoomDisplays } = {
-    roomDisplays: { displays: displays },
+  const value: RoomDisplayCtx = {
+    roomDetails: {
+      displays,
+      label,
+      name,
+      showVotes,
+    },
   };
 
   return <RoomDisplaysContext.Provider value={value}>{children}</RoomDisplaysContext.Provider>;

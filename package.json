@@ -13,7 +13,7 @@
     "dev": "NODE_ENV=development run-p dev:* --print-label",
     "dev:server": "NODE_ENV=development tsx watch src/server",
     "dev2:wss": "wait-port 3030 && tsx watch src/server/wsServer.ts",
-    "dev:client": "wait-port 3030 && vite",
+    "dev:client": "vite",
     "build:client": "VITE_APP_PORT=4173 vite build",
     "build:server": "tsc --project tsconfig.server.json",
     "build": "run-s build:*",
@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "@fastify/cors": "^8.2.0",
-    "@fastify/mysql": "^4.1.0",
     "@fastify/websocket": "^7.1.2",
     "@tanstack/react-query": "^4.24.4",
     "@tanstack/react-router": "^0.0.1-beta.82",
