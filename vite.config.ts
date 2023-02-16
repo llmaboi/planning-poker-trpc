@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       ? {
           proxy: {
             '/trpc': {
-              target: 'http://' + process.env.VITE_API_URL,
+              target: 'http://' + process.env.VITE_API_URL + ':3030',
             },
           },
           // port: appPort,
