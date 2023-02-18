@@ -13,6 +13,7 @@ export type RoomMapItem = Room & {
   displays: Map<string, Display>;
 };
 
+// TODO: Add some TTL (time to live) for these map items, if they aren't updated or used remove them.
 const roomsMap = new Map<string, RoomMapItem>();
 
 export function createContext({

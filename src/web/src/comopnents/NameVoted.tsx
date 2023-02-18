@@ -15,6 +15,7 @@ function VoteItem({ vote }: { vote: DisplayNameVote }) {
   );
 }
 
+// TOOD: there is a bug with the "displays" logged in here...
 function NameVoted() {
   const { roomDetails } = useRoomDisplays();
   const [displayNameAndVoted, setDisplayNameAndVoted] = useState<DisplayNameVote[]>([]);
