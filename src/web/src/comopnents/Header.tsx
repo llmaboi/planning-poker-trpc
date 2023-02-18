@@ -4,7 +4,7 @@ import { Room } from '../../../server/models/Room';
 import { roomRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
-import './Header.css';
+import './Header.scss';
 
 function HostHeader({ room }: { room: Room }) {
   const resetCardValuesMutation = trpc.rooms.reset.useMutation();
@@ -88,7 +88,7 @@ function Header() {
   }
 
   return (
-    <div id="header-wrapper">
+    <div className="HeaderWrapper">
       {currentDisplay?.isHost && <HostHeader room={room} />}
       {!currentDisplay?.isHost && <>Room Label: {room && room.label ? room.label : 'No room label'}</>}
       <button onClick={signOut}>Sign Out</button>

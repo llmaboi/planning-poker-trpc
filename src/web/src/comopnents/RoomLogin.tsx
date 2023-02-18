@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { displayLoginRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
-import './RoomLogin.css';
+import './RoomLogin.scss';
 
 function RoomList({ onSelectRoom, roomSearch }: { onSelectRoom: (roomId: string) => void; roomSearch: string }) {
   const { data: rooms, isLoading, isError } = trpc.rooms.list.useQuery();
@@ -22,17 +22,15 @@ function RoomList({ onSelectRoom, roomSearch }: { onSelectRoom: (roomId: string)
   });
 
   return (
-    <>
-      <ul>
-        {filteredRooms.map((room) => {
-          return (
-            <li key={room.id}>
-              <button onClick={() => handleClick(room.id)}>{room.name}</button>
-            </li>
-          );
-        })}
-      </ul>
-    </>
+    <ul className="RoomList">
+      {filteredRooms.map((room) => {
+        return (
+          <li key={room.id}>
+            <button onClick={() => handleClick(room.id)}>{room.name}</button>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -83,20 +81,20 @@ function RoomLogin() {
   // TODO: Fix a bug on "start" where you must "click" to trigger a refetch
   //  or something displaying a blank screen.
   return (
-    <>
-      <h2>Search for or select your room</h2>
+    <section className="RoomLogin">
+      <h1 className="Heading">Search for or select your room</h1>
       <form onSubmit={handleCreateRoom} style={{ display: 'flex', flexDirection: 'column' }}>
-        <label>
+        <label className="RoomInput">
           Create New Room: <input required type="text" value={roomName} onChange={handleRoomNameChange} />
         </label>
         {roomNameError && <span style={{ color: 'red' }}>Room Name is required</span>}
-        <button disabled={!roomNameExists} type="submit">
+        <button className="RoomCreate" disabled={!roomNameExists} type="submit">
           Create room
         </button>
       </form>
 
       <RoomList onSelectRoom={handleRoomSelection} roomSearch={roomName} />
-    </>
+    </section>
   );
 }
 

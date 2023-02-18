@@ -1,0 +1,11 @@
+@use '../../index.scss' as index;
+
+.AuthLayout {
+  background-color: index.$primary;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  min-height: 40rem;
+  padding: 4rem;
+}

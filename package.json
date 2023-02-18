@@ -41,6 +41,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-minimal-pie-chart": "^8.4.0",
+    "sass": "^1.58.3",
     "superjson": "^1.12.2",
     "tslib": "^2.5.0",
     "ws": "^8.12.0",

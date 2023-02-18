@@ -1,4 +1,4 @@
-import './Card.css';
+import './Card.scss';
 
 export default function Card({
   number,
@@ -11,14 +11,14 @@ export default function Card({
   buttonDisabled: boolean;
   onCardClick: (number: number) => void;
 }) {
-  let className = 'card-component';
+  let className = 'Card';
 
   if (buttonDisabled) {
     className += ' disabled';
   }
 
   if (selectedNumber && selectedNumber === number) {
-    className = 'card-component selected';
+    className = 'Card selected';
   }
 
   function handleCardClick() {

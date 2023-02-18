@@ -1,0 +1,55 @@
+@use '../../index.scss' as index;
+
+.NameVoted {
+  text-align: center;
+
+  h3 {
+    margin-bottom: 0;
+  }
+
+  h5 {
+    margin: 0;
+  }
+}
+
+.VotedWrapper {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+}
+
+.Votes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  p {
+    padding: 2rem;
+    margin: 0;
+  }
+}
+
+.Voted,
+.NotVoted {
+  border-radius: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0 0.5rem;
+}
+
+.Voted {
+  border: 0.2rem solid index.$green;
+}
+
+.NotVoted {
+  border: 0.2rem solid index.$red;
+}
+
+.VotedLabel,
+.NotVotedLabel {
+  margin: 0.2rem 0;
+  font-size: 2rem;
+  font-weight: bold;
+}

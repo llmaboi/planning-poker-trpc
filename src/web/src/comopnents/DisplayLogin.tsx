@@ -3,6 +3,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { displayLoginRoute, roomRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
+import './DisplayLogin.scss';
 
 function DisplayList({ roomId }: { roomId: string }) {
   const {
@@ -77,32 +78,37 @@ function DisplayLogin() {
   }
 
   return (
-    <>
-      <form onSubmit={handleFindOrCreateDisplay} style={{ display: 'flex', flexDirection: 'column' }}>
+    <form
+      className="DisplayLogin"
+      onSubmit={handleFindOrCreateDisplay}
+      style={{ display: 'flex', flexDirection: 'column' }}
+    >
+      <section className="DisplayLoginInputs">
         <label>
           Display Name:
           <input required type="text" value={displayName} onChange={handleDisplayChange} />
         </label>
         {displayNameError && <span style={{ color: 'red' }}>Display Name is required</span>}
-        <label>
-          Room Host:
+        <label className="Checkbox">
           <input type="checkbox" checked={isHost} onChange={handleHost} />
+          Room Host
         </label>
-        <button disabled={!displayNameExists} type="submit">
-          Join room
-        </button>
+      </section>
 
-        {/* TODO: make into separate component? */}
-        {isLoading || isError || (!isLoading && !room) ? (
-          <p>Loading room displays</p>
-        ) : (
-          <>
-            <h4>Current Display Names in {room.name}:</h4>
-            <DisplayList roomId={roomId} />
-          </>
-        )}
-      </form>
-    </>
+      <button disabled={!displayNameExists} type="submit">
+        Join room
+      </button>
+
+      {/* TODO: make into separate component? */}
+      {isLoading || isError || (!isLoading && !room) ? (
+        <p>Loading room displays</p>
+      ) : (
+        <>
+          <h4>Current Display Names in {room.name}:</h4>
+          <DisplayList roomId={roomId} />
+        </>
+      )}
+    </form>
   );
 }
 

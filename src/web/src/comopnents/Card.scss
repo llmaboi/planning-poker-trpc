@@ -1,0 +1,20 @@
+@use '../../index.scss' as index;
+
+.Card {
+  font-size: 3rem;
+  font-weight: bold;
+  border: 0.2rem solid;
+  height: 13rem;
+  width: 9rem;
+  margin: 0.5rem;
+  align-items: center;
+
+  &.disabled {
+    color: index.$red;
+    cursor: not-allowed;
+  }
+
+  &.selected {
+    color: index.$green;
+  }
+}

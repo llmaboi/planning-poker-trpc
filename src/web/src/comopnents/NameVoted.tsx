@@ -1,10 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
-import './NameVoted.css';
+import './NameVoted.scss';
+
+type DisplayNameVote = {
+  name: string;
+  voted: number;
+};
+
+function VoteItem({ vote }: { vote: DisplayNameVote }) {
+  return (
+    <p>
+      {vote.name}: {vote.voted}
+    </p>
+  );
+}
 
 function NameVoted() {
   const { roomDetails } = useRoomDisplays();
-  const [displayNameAndVoted, setDisplayNameAndVoted] = useState<{ name: string; voted: number }[]>([]);
+  const [displayNameAndVoted, setDisplayNameAndVoted] = useState<DisplayNameVote[]>([]);
   const displays = roomDetails.displays;
 
   useEffect(() => {
@@ -22,22 +35,32 @@ function NameVoted() {
 
   const nameVoted = displayNameAndVoted.filter(({ voted }) => voted);
 
+  const voted = displayNameAndVoted.filter((x) => x.voted > 0);
+  const notVoted = displayNameAndVoted.filter((x) => x.voted <= 0);
+
   return (
-    <section className="name-voted-wrapper">
+    <section className="NameVoted">
       <h3>Room voting results:</h3>
-      <h5>
+      <span className="OfVoted">
         {nameVoted.length} of {displayNameAndVoted.length} voted
-      </h5>
-      <div className="voted-wrapper">
-        {displayNameAndVoted.length === 0 && <div>No data to display</div>}
-        {displayNameAndVoted.length > 0 &&
-          displayNameAndVoted.map(({ name, voted }, index) => {
-            return (
-              <p key={index}>
-                {name}: {voted}
-              </p>
-            );
-          })}
+      </span>
+      <div className="VotedWrapper">
+        <section className="Voted">
+          <span className="VotedLabel">Voted</span>
+          <div className="Votes">
+            {voted.map((x) => (
+              <VoteItem vote={x} key={x.name} />
+            ))}
+          </div>
+        </section>
+        <section className="NotVoted">
+          <span className="NotVotedLabel">Not Voted</span>
+          <div className="Votes">
+            {notVoted.map((x) => (
+              <VoteItem vote={x} key={x.name} />
+            ))}
+          </div>
+        </section>
       </div>
     </section>
   );

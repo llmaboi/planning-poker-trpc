@@ -1,8 +1,8 @@
 import { PieChart } from 'react-minimal-pie-chart';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
-import './PieData.css';
+import './PieData.scss';
 
-const cardColors = ['#8D5A97', '#907F9F', '#A4A5AE', '#B0C7BD', '#B8EBD0', '#14342B', '#60935D', '#BAB700', '#BBDFC5'];
+const cardColors = ['#BC8843', '#00C9AF', '#996925', '#5FD8A4', '#92E59B', '#C2F195', '#65B8FF', '#FFF3A8', '#AB8B67'];
 
 function PieData() {
   const { roomDetails } = useRoomDisplays();
@@ -34,7 +34,6 @@ function PieData() {
       title: key,
       label: () => key,
       value: val,
-      // TODO: Fix colors...
       color: cardColors[index] || '',
     };
   });
@@ -44,19 +43,21 @@ function PieData() {
   }
 
   return (
-    <section className="pie-wrapper">
+    <section className="PieData">
       {pieData.length > 0 && (
-        <PieChart
-          data={pieData}
-          label={({ dataEntry }) => `${dataEntry.title} | ${Math.round(dataEntry.percentage)}%`}
-          labelStyle={(index) => ({
-            fill: cardColors[index],
-            fontSize: '5px',
-            fontFamily: 'sans-serif',
-          })}
-          radius={35}
-          labelPosition={115}
-        />
+        <div className="PieChartWrapper">
+          <PieChart
+            data={pieData}
+            label={({ dataEntry }) => `${dataEntry.title} | ${Math.round(dataEntry.percentage)}%`}
+            labelStyle={(index) => ({
+              fill: cardColors[index],
+              fontSize: '0.5rem',
+            })}
+            radius={35}
+            labelPosition={115}
+            style={{ overflow: 'visible' }}
+          />
+        </div>
       )}
     </section>
   );

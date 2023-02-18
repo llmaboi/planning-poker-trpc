@@ -5,7 +5,7 @@ import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import Card from './Card';
 import NameVoted from './NameVoted';
 import PieData from './PieData';
-import './Room.css';
+import './Room.scss';
 
 const cards = [1, 2, 3, 5, 8, 13, 21, 34, 55];
 
@@ -40,7 +40,7 @@ export default function Room() {
 
   return (
     <>
-      <div className="cards-wrapper">
+      <div className="RoomCards">
         {cards.map((number) => {
           return (
             <Card
@@ -54,13 +54,13 @@ export default function Room() {
         })}
       </div>
 
+      <div className="ResetSelection">
+        <button onClick={resetSelection}>Reset Selection</button>
+      </div>
+
       {/* TODO: Show voted... */}
       {roomDetails.showVotes && roomDetails && <NameVoted />}
       {roomDetails.showVotes && roomDetails && <PieData />}
-
-      <div className="reset-selection">
-        <button onClick={resetSelection}>Reset Selection</button>
-      </div>
     </>
   );
 }

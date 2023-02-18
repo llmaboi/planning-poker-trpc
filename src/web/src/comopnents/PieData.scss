@@ -1,0 +1,13 @@
+.PieData {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.PieChartWrapper {
+  min-width: 37.5rem;
+  max-width: 65rem;
+  width: 50%;
+  padding: 2.5rem 0;
+  overflow: visible;
+}

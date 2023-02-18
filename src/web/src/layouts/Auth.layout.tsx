@@ -1,16 +1,14 @@
 // import Header from '../components/Header';
 import { Outlet } from '@tanstack/react-router';
 import Header from '../comopnents/Header';
-import './Auth.layout.css';
+import './Auth.layout.scss';
 
 function AuthLayout() {
   return (
-    <>
+    <section className="AuthLayout">
       <Header />
-      <section className="auth-body">
-        <Outlet />
-      </section>
-    </>
+      <Outlet />
+    </section>
   );
 }
 

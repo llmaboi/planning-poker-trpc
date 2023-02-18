@@ -1,0 +1,34 @@
+@use '../../index.scss' as index;
+
+.RoomLogin {
+  display: flex;
+  flex-direction: column;
+  background-color: index.$primary;
+  padding: 4rem;
+  border-radius: 1rem;
+  width: 50vw;
+}
+
+.Heading {
+  margin: 0;
+  margin-bottom: 2rem;
+}
+
+.RoomInput {
+  margin-bottom: 2rem;
+}
+
+.RoomCreate {
+  margin-bottom: 2rem;
+}
+
+.RoomList {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  width: 100%;
+
+  li {
+    margin: 1rem;
+  }
+}

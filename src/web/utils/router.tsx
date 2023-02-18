@@ -8,11 +8,7 @@ import AuthLayout from '../src/layouts/Auth.layout';
 import { RoomDisplaysProvider } from '../src/providers/roomDisplays.provider';
 
 const rootRoute = new RootRoute({
-  component: () => (
-    <>
-      <Outlet />
-    </>
-  ),
+  component: Outlet,
 });
 
 const noDisplayRoute = new Route({
