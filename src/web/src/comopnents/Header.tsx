@@ -1,19 +1,21 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { ChangeEvent, useState } from 'react';
 import { Room } from '../../../server/models/Room';
+import { RoomMapItem } from '../../../server/router/context';
 import { roomRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import './Header.scss';
 
-function HostHeader({ room }: { room: Room }) {
+function HostHeader({ roomId }: { roomId: string }) {
+  const { roomDetails } = useRoomDisplays();
   const resetCardValuesMutation = trpc.rooms.reset.useMutation();
   const updateRoom = trpc.rooms.update.useMutation();
-  const [label, setLabel] = useState(room.label || '');
+  const [label, setLabel] = useState(roomDetails.label || '');
 
   function resetCards() {
     // TODO: write simpler FN to reset room cards...
-    resetCardValuesMutation.mutate({ id: room.id });
+    resetCardValuesMutation.mutate({ id: roomId });
   }
 
   function handleLabelChange(event: ChangeEvent<HTMLInputElement>) {
@@ -26,13 +28,12 @@ function HostHeader({ room }: { room: Room }) {
       // TODO: make component with "reset"
       console.error('invalid label');
     } else {
-      updateRoom.mutate({ ...room, label });
+      updateRoom.mutate({ ...roomDetails, id: roomId, label });
     }
   }
 
   function handleShowVotes() {
-    // TODO: Add a value to show / hide votes if user is not "host"
-    updateRoom.mutate({ ...room, showVotes: !room.showVotes });
+    updateRoom.mutate({ ...roomDetails, id: roomId, showVotes: !roomDetails.showVotes });
   }
 
   return (
@@ -49,7 +50,7 @@ function HostHeader({ room }: { room: Room }) {
         Reset cards
       </button>
 
-      {room.showVotes ? (
+      {roomDetails.showVotes ? (
         <button disabled={updateRoom.isLoading} onClick={handleShowVotes}>
           Hide Votes
         </button>
@@ -65,7 +66,6 @@ function HostHeader({ room }: { room: Room }) {
 function Header() {
   const navigate = useNavigate({});
   const { roomId, displayId } = useParams({ from: roomRoute.fullPath });
-  const { data: room, isLoading, isError } = trpc.rooms.byId.useQuery({ id: roomId });
   const { roomDetails } = useRoomDisplays();
 
   const currentDisplay = roomDetails.displays.find((display) => display.id === displayId);
@@ -78,19 +78,12 @@ function Header() {
     return <div>Routing to No Auth...</div>;
   }
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (isError) {
-    // TODO: add button to try again?
-    return <p>Something went wrong...</p>;
-  }
-
   return (
     <div className="HeaderWrapper">
-      {currentDisplay?.isHost && <HostHeader room={room} />}
-      {!currentDisplay?.isHost && <>Room Label: {room && room.label ? room.label : 'No room label'}</>}
+      {currentDisplay?.isHost && <HostHeader roomId={roomId} />}
+      {!currentDisplay?.isHost && (
+        <>Room Label: {roomDetails && roomDetails.label ? roomDetails.label : 'No room label'}</>
+      )}
       <button onClick={signOut}>Sign Out</button>
     </div>
   );

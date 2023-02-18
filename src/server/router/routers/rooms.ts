@@ -53,7 +53,7 @@ export const roomsRouter = trpcRouter({
 
     roomsMap.set(id, newRoom);
 
-    const socketKey = SocketKeys.displays + '-' + id;
+    const socketKey = SocketKeys.displays + '-' + room.id;
     ctx.emitter.emit(socketKey, newRoom);
 
     return newRoom;

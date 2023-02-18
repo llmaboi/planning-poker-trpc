@@ -172,7 +172,6 @@ export const displaysRouter = trpcRouter({
       const socketKey = SocketKeys.displays + '-' + input.roomId;
 
       function onDisplayUpdate(data: RoomMapItem) {
-        console.log('data: ', data);
         emit.next(data);
       }
 
