@@ -41,36 +41,32 @@ const verifiedLayoutRoute = new Route({
 export const displayLoginRoute = new Route({
   getParentRoute: () => roomSubRoute,
   path: 'room/$roomId',
-  parseParams: (params) => {
-    return { roomId: params.roomId };
-  },
-  stringifyParams: ({ roomId }) => {
-    return { roomId: roomId };
-  },
+  // parseParams: (params) => {
+  //   return { roomId: params.roomId };
+  // },
+  // stringifyParams: ({ roomId }) => {
+  //   return { roomId: roomId };
+  // },
   component: DisplayLogin,
 });
-
-roomSubRoute.addChildren([displayLoginRoute, verifiedLayoutRoute]);
 
 export const roomRoute = new Route({
   getParentRoute: () => verifiedLayoutRoute,
   path: 'room/$roomId/$displayId',
   component: Room,
-  parseParams: (params) => {
-    return {
-      roomId: params.roomId,
-      displayId: params.displayId,
-    };
-  },
-  stringifyParams: ({ roomId, displayId }) => {
-    return {
-      roomId: roomId,
-      displayId: displayId,
-    };
-  },
+  // parseParams: (params) => {
+  //   return {
+  //     roomId: params.roomId,
+  //     displayId: params.displayId,
+  //   };
+  // },
+  // stringifyParams: ({ roomId, displayId }) => {
+  //   return {
+  //     roomId: roomId,
+  //     displayId: displayId,
+  //   };
+  // },
 });
-
-verifiedLayoutRoute.addChildren([roomRoute]);
 
 const invalidDisplay = new Route({
   getParentRoute: () => rootRoute,
@@ -87,7 +83,7 @@ const catchAll = new Route({
 const routeConfig = rootRoute.addChildren([
   noDisplayRoute,
   // displayLoginRoute,
-  roomSubRoute,
+  roomSubRoute.addChildren([displayLoginRoute, verifiedLayoutRoute.addChildren([roomRoute])]),
   // verifiedLayoutRoute,
   invalidDisplay,
   catchAll,
@@ -97,8 +93,9 @@ export const router = new ReactRouter({
   routeTree: routeConfig,
 });
 
+// Register your router for maximum type safety
 declare module '@tanstack/react-router' {
-  interface RegisterRouter {
+  interface Register {
     router: typeof router;
   }
 }
