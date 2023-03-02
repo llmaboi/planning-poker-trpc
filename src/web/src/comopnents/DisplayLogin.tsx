@@ -15,9 +15,9 @@ function DisplayList({ roomId }: { roomId: string }) {
   });
 
   if (isLoading) {
-    return <p>Loading rooms...</p>;
+    return <p>Loading in use display names...</p>;
   } else if (isError || (!isLoading && !displays)) {
-    return <p>Something went wrong getting the rooms...</p>;
+    return <p>Something went wrong getting the in use display names...</p>;
   }
 
   return (

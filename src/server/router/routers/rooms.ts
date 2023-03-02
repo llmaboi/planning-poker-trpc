@@ -8,9 +8,10 @@ import { SocketKeys } from './displays.js';
 
 function cleanupRoomMap(roomsMap: Map<string, RoomMapItem>) {
   const items = Array.from(roomsMap.values());
+  const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
+
   items.forEach((item) => {
-    // if ttl is over 24 hours away remove it
-    if (Date.now() - item.ttl > 24 * 60 * 60 * 1000) {
+    if (item.ttl < twentyFourHoursAgo) {
       roomsMap.delete(item.id);
     }
   });
