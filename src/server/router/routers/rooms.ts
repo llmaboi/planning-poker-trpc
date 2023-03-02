@@ -6,16 +6,27 @@ import { RoomMapItem } from '../context.js';
 import { publicProcedure, trpcRouter } from '../trpc.js';
 import { SocketKeys } from './displays.js';
 
+function cleanupRoomMap(roomsMap: Map<string, RoomMapItem>) {
+  const items = Array.from(roomsMap.values());
+  items.forEach((item) => {
+    // if ttl is over 24 hours away remove it
+    if (Date.now() - item.ttl > 24 * 60 * 60 * 1000) {
+      roomsMap.delete(item.id);
+    }
+  });
+}
+
 export const roomsRouter = trpcRouter({
   create: publicProcedure.input(ZodRoom.omit({ id: true })).mutation(function ({ input, ctx }): RoomMapItem {
     const { roomsMap } = ctx;
 
     const id = kebabStyle(input.name);
-    const newDisplayMapItem = {
+    const newDisplayMapItem: RoomMapItem = {
       ...input,
       id,
       displays: new Map(),
       label: input.label ?? '',
+      ttl: Date.now(),
     };
 
     roomsMap.set(id, newDisplayMapItem);
@@ -35,6 +46,13 @@ export const roomsRouter = trpcRouter({
     const { roomsMap } = ctx;
 
     const rooms = Array.from(roomsMap.values());
+
+    // Fire off async (ignored) fn to clean up cache.
+    try {
+      void cleanupRoomMap(roomsMap);
+    } catch (error) {
+      console.warn('Cleanup proccess error', error);
+    }
 
     return rooms;
   }),

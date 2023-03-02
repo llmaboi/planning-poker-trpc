@@ -29,8 +29,8 @@ function RoomDisplaysProvider({ children }: { children: ReactNode }) {
   const [label, setLabel] = useState('');
   const [name, setName] = useState('');
   const [showVotes, setShowVotes] = useState(false);
-
   const [displays, setDisplays] = useState<Display[]>([]);
+  const [ttl, setTtl] = useState(0);
 
   useEffect(() => {
     if (roomId && !isLoading) {
@@ -39,6 +39,7 @@ function RoomDisplaysProvider({ children }: { children: ReactNode }) {
         setLabel(data.label ?? '');
         setName(data.name);
         setShowVotes(data.showVotes);
+        setTtl(data.ttl);
         data && setDisplays(Array.from(data.displays.values()));
       }
     }
@@ -52,6 +53,7 @@ function RoomDisplaysProvider({ children }: { children: ReactNode }) {
         setLabel(roomMapItem.label ?? '');
         setName(roomMapItem.name);
         setShowVotes(roomMapItem.showVotes);
+        setTtl(roomMapItem.ttl);
 
         setDisplays(displays);
       },
@@ -67,6 +69,7 @@ function RoomDisplaysProvider({ children }: { children: ReactNode }) {
       label,
       name,
       showVotes,
+      ttl,
     },
   };
 

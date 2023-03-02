@@ -9,8 +9,13 @@ import { Display, Room } from '../models/index.js';
 // TODO: maybe add an "auth ctx" for a room && display? hiding those routes?
 const emitter = new EventEmitter();
 
+/**
+ * ttl is milliseconds left for this item to live.
+ * Defaults to 24 hours.
+ */
 export type RoomMapItem = Room & {
   displays: Map<string, Display>;
+  ttl: number;
 };
 
 // TODO: Add some TTL (time to live) for these map items, if they aren't updated or used remove them.
