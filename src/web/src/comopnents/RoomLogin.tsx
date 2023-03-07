@@ -78,8 +78,6 @@ function RoomLogin() {
     });
   }
 
-  // TODO: Fix a bug on "start" where you must "click" to trigger a refetch
-  //  or something displaying a blank screen.
   return (
     <section className="RoomLogin">
       <h1 className="Heading">Search for or select your room</h1>

@@ -30,8 +30,15 @@ export const roomsRouter = trpcRouter({
       ttl: Date.now(),
     };
 
+    // Fire off async (ignored) fn to clean up cache.
+    try {
+      void cleanupRoomMap(roomsMap);
+    } catch (error) {
+      console.warn('-------- Cleanup process error --------', error);
+    }
+
     roomsMap.set(id, newDisplayMapItem);
-    // no socket should be listing to a room that was just created.
+    // no socket should be listening to a room that was just created.
 
     return newDisplayMapItem;
   }),
@@ -47,13 +54,6 @@ export const roomsRouter = trpcRouter({
     const { roomsMap } = ctx;
 
     const rooms = Array.from(roomsMap.values());
-
-    // Fire off async (ignored) fn to clean up cache.
-    try {
-      void cleanupRoomMap(roomsMap);
-    } catch (error) {
-      console.warn('Cleanup proccess error', error);
-    }
 
     return rooms;
   }),

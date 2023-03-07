@@ -132,7 +132,6 @@ export const displaysRouter = trpcRouter({
       if (room === undefined)
         throw new TRPCError({ code: 'NOT_FOUND', message: `Room not found with ID: ${input.roomId}` });
 
-      // TODO: Verify ID of this?
       const displays = Array.from(room.displays.values());
 
       return displays;
@@ -145,7 +144,6 @@ export const displaysRouter = trpcRouter({
     if (room === undefined)
       throw new TRPCError({ code: 'NOT_FOUND', message: `Room not found with ID: ${input.roomId}` });
 
-    // TODO: Verify ID of this?
     const id = kebabStyle(input.name);
     const display = room.displays.get(id);
 
@@ -165,8 +163,6 @@ export const displaysRouter = trpcRouter({
     return updatedDisplay;
   }),
 
-  // TODO: work on this where you only subscribe to a room.
-  //  It must be a unique key of `display-${ROOM_ID}`
   socket: publicProcedure.input(z.object({ roomId: z.string() })).subscription(({ ctx, input }) => {
     return observable<RoomMapItem>((emit) => {
       const socketKey = SocketKeys.displays + '-' + input.roomId;

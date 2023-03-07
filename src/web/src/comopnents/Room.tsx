@@ -58,7 +58,6 @@ export default function Room() {
         <button onClick={resetSelection}>Reset Selection</button>
       </div>
 
-      {/* TODO: Show voted... */}
       {roomDetails.showVotes && roomDetails && <NameVoted />}
       {roomDetails.showVotes && roomDetails && <PieData />}
     </>

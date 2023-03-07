@@ -2,7 +2,6 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { displayLoginRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
-import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import './DisplayLogin.scss';
 
 function DisplayList({ roomId }: { roomId: string }) {
@@ -39,15 +38,12 @@ function DisplayLogin() {
   const createOrUpdateDisplayMutation = trpc.displays.createOrUpdate.useMutation();
   const { data: room, isLoading, isError } = trpc.rooms.byId.useQuery({ id: roomId });
   const navigate = useNavigate({ from: displayLoginRoute.id });
-  // Start listening to the socket early so we can react to it.
-  useRoomDisplays();
+  const utils = trpc.useContext();
 
   const displayNameExists = displayName && displayName.length > 0;
 
   function handleDisplayChange(event: ChangeEvent<HTMLInputElement> | undefined) {
-    if (event && event.target.value) {
-      setDisplayName(event.target.value);
-    }
+    if (event) setDisplayName(event.target.value);
   }
 
   function handleHost() {
@@ -65,6 +61,33 @@ function DisplayLogin() {
       { roomId, cardValue: 0, isHost, name: displayName },
       {
         onSuccess: (data) => {
+          utils.displays.listByRoom.setData({ roomId }, (oldData) => {
+            if (oldData === undefined) return;
+            const newDisplays = [...oldData];
+
+            // Add new data only if the id doesn't exist.
+            if (newDisplays.find((display) => display.id === data.id) === undefined) {
+              newDisplays.push(data);
+            }
+
+            return newDisplays;
+          });
+
+          utils.rooms.byId.setData({ id: roomId }, (oldData) => {
+            if (oldData === undefined) return;
+            const newRoom = { ...oldData };
+            const newRoomDisplays = newRoom.displays;
+
+            // Add new data only if the id doesn't exist.
+            if (newRoomDisplays.has(data.id) === false) {
+              newRoomDisplays.set(data.id, data);
+            }
+
+            newRoom.displays = newRoomDisplays;
+
+            return newRoom;
+          });
+
           void navigate({
             to: '/room/$roomId/$displayId',
             search: {},

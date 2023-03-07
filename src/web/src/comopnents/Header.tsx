@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { roomRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
@@ -9,10 +9,16 @@ function HostHeader({ roomId }: { roomId: string }) {
   const { roomDetails } = useRoomDisplays();
   const resetCardValuesMutation = trpc.rooms.reset.useMutation();
   const updateRoom = trpc.rooms.update.useMutation();
-  const [label, setLabel] = useState(roomDetails.label || '');
+  const [label, setLabel] = useState('');
+  const { label: providerLabel } = roomDetails;
+
+  useEffect(() => {
+    if (typeof providerLabel === 'string') {
+      setLabel(providerLabel);
+    }
+  }, [providerLabel]);
 
   function resetCards() {
-    // TODO: write simpler FN to reset room cards...
     resetCardValuesMutation.mutate({ id: roomId });
   }
 
@@ -68,12 +74,8 @@ function Header() {
 
   const currentDisplay = roomDetails.displays.find((display) => display.id === displayId);
 
-  // TODO: Move this to a common header...
-  function signOut() {
-    // TODO: Does state need to be reset?
-    void navigate({ to: '/noDisplay' });
-    // TODO: Correct this...
-    return <div>Routing to No Auth...</div>;
+  function changeRoom() {
+    void navigate({ to: '/' });
   }
 
   return (
@@ -82,7 +84,7 @@ function Header() {
       {!currentDisplay?.isHost && (
         <>Room Label: {roomDetails && roomDetails.label ? roomDetails.label : 'No room label'}</>
       )}
-      <button onClick={signOut}>Sign Out</button>
+      <button onClick={changeRoom}>Change Room</button>
     </div>
   );
 }
