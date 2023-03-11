@@ -1,6 +1,7 @@
 import { PieChart } from 'react-minimal-pie-chart';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import './PieData.scss';
+import { h } from 'preact';
 
 const cardColors = ['#BC8843', '#00C9AF', '#996925', '#5FD8A4', '#92E59B', '#C2F195', '#65B8FF', '#FFF3A8', '#AB8B67'];
 
@@ -49,7 +50,7 @@ function PieData() {
           <PieChart
             data={pieData}
             label={({ dataEntry }) => `${dataEntry.title} | ${Math.round(dataEntry.percentage)}%`}
-            labelStyle={(index) => ({
+            labelStyle={(index: number) => ({
               fill: cardColors[index],
               fontSize: '0.5rem',
             })}

@@ -1,10 +1,13 @@
 // import { websocketRoomDisplays } from '../api/mysqlFastify';
 import { useParams } from '@tanstack/react-router';
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext } from 'preact';
+import { useContext, useEffect, useState } from 'preact/hooks';
+import { JSXInternal } from 'preact/src/jsx';
 import { Display } from '../../../server/models/Display';
 import { RoomMapItem } from '../../../server/router/context';
 import { displayLoginRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
+import { h } from 'preact';
 
 type RoomDetails = Omit<RoomMapItem, 'id' | 'displays'> & {
   displays: Display[];
@@ -14,7 +17,7 @@ type RoomDisplayCtx = { roomDetails: RoomDetails };
 
 const RoomDisplaysContext = createContext<RoomDisplayCtx | undefined>(undefined);
 
-function RoomDisplaysProvider({ children }: { children: ReactNode }) {
+function RoomDisplaysProvider({ children }: { children: JSXInternal.ElementChildrenAttribute }) {
   const { roomId } = useParams({ from: displayLoginRoute.id });
   const { data, isLoading } = trpc.rooms.byId.useQuery(
     { id: roomId },

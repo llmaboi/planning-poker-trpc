@@ -1,8 +1,10 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { useState } from 'preact/hooks';
 import { displayLoginRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 import './DisplayLogin.scss';
+import { h, Fragment } from 'preact';
+import { JSXInternal } from 'preact/src/jsx';
 
 function DisplayList({ roomId }: { roomId: string }) {
   const {
@@ -42,15 +44,15 @@ function DisplayLogin() {
 
   const displayNameExists = displayName && displayName.length > 0;
 
-  function handleDisplayChange(event: ChangeEvent<HTMLInputElement> | undefined) {
-    if (event) setDisplayName(event.target.value);
-  }
+  const handleDisplayChange: JSXInternal.GenericEventHandler<HTMLInputElement> = (event) => {
+    if (event) setDisplayName(event.currentTarget.value);
+  };
 
   function handleHost() {
     setIsHost(!isHost);
   }
 
-  function handleFindOrCreateDisplay(event: FormEvent<HTMLFormElement>) {
+  const handleFindOrCreateDisplay: JSXInternal.GenericEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     if (!displayNameExists) {
       setDisplayNameError(true);
@@ -99,7 +101,7 @@ function DisplayLogin() {
         },
       }
     );
-  }
+  };
 
   return (
     <form

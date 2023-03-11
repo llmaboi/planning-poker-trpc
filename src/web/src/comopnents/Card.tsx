@@ -1,4 +1,5 @@
 import './Card.scss';
+import { h } from 'preact';
 
 export default function Card({
   number,

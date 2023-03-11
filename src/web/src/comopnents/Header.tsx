@@ -1,9 +1,11 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { ChangeEvent, useEffect, useState } from 'react';
 import { roomRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
+import { h, Fragment } from 'preact';
 import './Header.scss';
+import { useEffect, useState } from 'preact/hooks';
+import { JSXInternal } from 'preact/src/jsx';
 
 function HostHeader({ roomId }: { roomId: string }) {
   const { roomDetails } = useRoomDisplays();
@@ -22,10 +24,10 @@ function HostHeader({ roomId }: { roomId: string }) {
     resetCardValuesMutation.mutate({ id: roomId });
   }
 
-  function handleLabelChange(event: ChangeEvent<HTMLInputElement>) {
-    const newLabel = event.target.value;
+  const handleLabelChange: JSXInternal.GenericEventHandler<HTMLInputElement> = (event) => {
+    const newLabel = event.currentTarget.value;
     setLabel(newLabel);
-  }
+  };
 
   function updateLabel() {
     if (!label || !label.length) {

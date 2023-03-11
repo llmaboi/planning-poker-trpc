@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'preact/hooks';
 import { useRoomDisplays } from '../providers/roomDisplays.provider';
+import { h } from 'preact';
 import './NameVoted.scss';
 
 type DisplayNameVote = {

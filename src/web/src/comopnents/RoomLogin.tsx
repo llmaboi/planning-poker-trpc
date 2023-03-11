@@ -1,8 +1,10 @@
 import { useNavigate } from '@tanstack/react-router';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { useState } from 'preact/hooks';
 import { displayLoginRoute } from '../../utils/router';
 import { trpc } from '../../utils/trpc';
+import { h } from 'preact';
 import './RoomLogin.scss';
+import { JSXInternal } from 'preact/src/jsx';
 
 function RoomList({ onSelectRoom, roomSearch }: { onSelectRoom: (roomId: string) => void; roomSearch: string }) {
   const { data: rooms, isLoading, isError } = trpc.rooms.list.useQuery();
@@ -42,15 +44,15 @@ function RoomLogin() {
 
   const roomNameExists = roomName.length > 0;
 
-  function handleRoomNameChange(event: ChangeEvent<HTMLInputElement> | undefined) {
-    if (event && event.target.value) {
-      setRoomName(event.target.value);
+  const handleRoomNameChange: JSXInternal.GenericEventHandler<HTMLInputElement> = (event) => {
+    if (event && event.currentTarget.value) {
+      setRoomName(event.currentTarget.value);
     } else {
       setRoomName('');
     }
-  }
+  };
 
-  function handleCreateRoom(event: FormEvent<HTMLFormElement>) {
+  const handleCreateRoom: JSXInternal.GenericEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     if (!roomNameExists) {
@@ -69,7 +71,7 @@ function RoomLogin() {
         },
       }
     );
-  }
+  };
 
   function handleRoomSelection(roomId: string) {
     void navigate({

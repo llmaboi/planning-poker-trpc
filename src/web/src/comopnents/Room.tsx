@@ -5,6 +5,7 @@ import { useRoomDisplays } from '../providers/roomDisplays.provider';
 import Card from './Card';
 import NameVoted from './NameVoted';
 import PieData from './PieData';
+import { h, Fragment } from 'preact';
 import './Room.scss';
 
 const cards = [1, 2, 3, 5, 8, 13, 21, 34, 55];

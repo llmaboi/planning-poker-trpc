@@ -6,6 +6,7 @@ import Room from '../src/comopnents/Room';
 import RoomLogin from '../src/comopnents/RoomLogin';
 import AuthLayout from '../src/layouts/Auth.layout';
 import { RoomDisplaysProvider } from '../src/providers/roomDisplays.provider';
+import { h } from 'preact';
 
 const rootRoute = new RootRoute({
   component: Outlet,
@@ -21,6 +22,8 @@ const roomSubRoute = new Route({
   id: 'RoomSubscription',
   component: () => (
     <RoomDisplaysProvider>
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+      {/* @ts-ignore */}
       <Outlet />
     </RoomDisplaysProvider>
   ),
@@ -32,6 +35,8 @@ const verifiedLayoutRoute = new Route({
   // TODO: I'm not sure why I need to repeat this provider...
   component: () => (
     <RoomDisplaysProvider>
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+      {/* @ts-ignore */}
       <AuthLayout />
     </RoomDisplaysProvider>
   ),

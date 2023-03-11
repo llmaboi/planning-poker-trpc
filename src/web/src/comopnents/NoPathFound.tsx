@@ -1,4 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
+import { h } from 'preact';
 
 function NoPathFound() {
   const navigate = useNavigate({ from: '/*' });
